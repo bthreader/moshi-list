@@ -30,7 +30,7 @@ export default function NavBar() {
 
     const handleLogout = () => {
         handleClose();
-        instance.logoutPopup({
+        instance.logoutRedirect({
             postLogoutRedirectUri: "/",
         });
     };
@@ -55,7 +55,7 @@ export default function NavBar() {
                 <UnauthenticatedTemplate>
                     <Button 
                         color="primary"
-                        onClick={() => instance.loginPopup()}
+                        onClick={() => instance.loginRedirect()}
                         sx={{padding: 0}}
                     >
                         Login
