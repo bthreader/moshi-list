@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export function formSubmitOnEnterKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     switch (e.key) {
         case "Enter": 
