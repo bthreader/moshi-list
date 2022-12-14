@@ -1,7 +1,5 @@
 import * as React from 'react';
-import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Dialog, IconButton, Stack, TextField } from "@mui/material"
-import { Container } from "@mui/system"
+import { Box } from "@mui/material"
 import axios from 'axios';
 import TaskDialog from './TaskDialog';
 import Task from '../../core/models/task.model';
@@ -38,7 +36,7 @@ export default function UpdateTask(props: UpdateTaskProps) {
         const n = formData.get('notes');
         if (
             (n === undefined) || 
-            (n === '') && 
+            (n === '') ||
             ((props.task as Task).notes === undefined)
         ) {
             formData.delete('notes');

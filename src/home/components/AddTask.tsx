@@ -1,7 +1,6 @@
 import * as React from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Dialog, IconButton, Stack, TextField } from "@mui/material"
-import { Container } from "@mui/system"
+import { Box, IconButton } from "@mui/material"
 import axios from 'axios';
 import TaskDialog from './TaskDialog';
 import { useMsal } from '@azure/msal-react'
@@ -42,7 +41,7 @@ export default function AddTask(props: AddTaskProps) {
             const access_token = (await instance.acquireTokenSilent(accessTokenRequest)).accessToken;
 
             // Make request to the API
-            const response = await axios.post(
+            await axios.post(
                 '/v1/tasks', Object.fromEntries(formData),
                 {headers: {Authorization: `Bearer ${access_token}`}}
             );

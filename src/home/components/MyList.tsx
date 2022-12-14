@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Task from "../../core/models/task.model"
-import { ListItem, ListItemText, ListItemButton, Checkbox, useThemeProps, Box, List, IconButton, Button, Skeleton, Typography } from '@mui/material';
+import { ListItem, ListItemText, ListItemButton, Checkbox, Box, IconButton, Button, Skeleton, Typography } from '@mui/material';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddTask from './AddTask';
@@ -37,7 +37,7 @@ export default function MyList(props: MyListProps) {
     const closeUpdateDialog = () => setUpdateDialogOpen(false);
 
     // Get access token
-    const getAccessToken = async () => {
+    const getAccessToken = React.useCallback(async () => {
         const accessTokenRequest = {account: accounts[0], scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]}
         try {
             // Get access token
@@ -49,7 +49,7 @@ export default function MyList(props: MyListProps) {
                 case InteractionRequiredAuthError: instance.acquireTokenPopup(accessTokenRequest);
             }
         }
-    }
+    }, [instance, accounts]);
 
     // -----------------------------------------------------------------------
     //  Handlers
@@ -132,7 +132,7 @@ export default function MyList(props: MyListProps) {
         }
 
         getTask();
-    },[props.listId, tasksChanged])
+    },[props.listId, tasksChanged, getAccessToken])
 
     // -----------------------------------------------------------------------
     //  Content

@@ -37,7 +37,7 @@ export default function AddList(props: AddListProps) {
             const access_token = (await instance.acquireTokenSilent(accessTokenRequest)).accessToken;
 
             // Make request to API
-            const response = await axios.post(
+            await axios.post(
                 '/v1/lists',
                 {'name': formData.get('name')},
                 {headers: {Authorization: `Bearer ${access_token}`}}

@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { Box, Button, CircularProgress, Stack, Tab, Tabs, Toolbar, Typography } from "@mui/material"
+import { Box, CircularProgress, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { Status } from "../core/models/status.model"
 import TaskList from "../core/models/list.model"
-import axios, { Axios, AxiosError } from 'axios'
+import axios from 'axios'
 import { styled } from '@mui/material/styles';
 import MyList from './components/MyList'
 import { Container } from '@mui/system'
@@ -86,7 +86,7 @@ export default function MyLists() {
         }
 
         get_lists();
-    },[listsChanged]);
+    },[instance, accounts, listsChanged]);
 
     // -----------------------------------------------------------------------
     //  Event handlers
@@ -132,6 +132,7 @@ export default function MyLists() {
             }}
         >
             <img
+                alt="Making notes"
                 src='https://media.tenor.com/iN6--FUiMnAAAAAC/noted-notes.gif'
             />
         </Box>
