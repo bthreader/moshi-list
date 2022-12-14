@@ -14,7 +14,7 @@ export default function NotLoggedInGreeting() {
                 color='primary' 
                 style={greetingStyle}
             >
-                Moshi Moshi! Log in with your Microsoft account to get started!
+                Moshi Moshi! Log in with your Microsoft or Google account to get started!
             </Typography>
         </Container>
     )

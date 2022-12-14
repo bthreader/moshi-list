@@ -1,3 +1,8 @@
 # Moshi List
 
-Minimalist to-do app built with Typescript, React and Material UI. Client authentication using Microsoft Identity.
+![Build status](https://github.com/bthreader/moshi-list/actions/workflows/ci.yml/badge.svg)
+
+* Minimalist to-do app
+* Built in response to the perceived over-engineering and proliferation of feature creep in modern productivity apps
+* Users sign in with their existing Microsoft or Google accounts
+* Made with Typescript, React and Material UI
