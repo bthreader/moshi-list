@@ -33,6 +33,7 @@ jobs:
           REACT_APP_TENANT_ID: ${{ secrets.REACT_APP_TENANT_ID }}
 
   deploy:
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
