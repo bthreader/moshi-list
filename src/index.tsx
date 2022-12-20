@@ -40,7 +40,9 @@ axios.interceptors.response.use(response => {
 const config = {
   auth: {
       clientId: (process.env.REACT_APP_CLIENT_ID as string),
-      authority: 'https://login.microsoftonline.com/'+process.env.REACT_APP_TENANT_ID
+      authority: 'https://login.microsoftonline.com/'+process.env.REACT_APP_TENANT_ID,
+      redirectUri: "/",
+      postLogoutRedirectUri: "/"
   }
 };
 
