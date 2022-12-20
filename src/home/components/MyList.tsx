@@ -7,6 +7,7 @@ import AddTask from './AddTask';
 import UpdateTask from './UpdateTask';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import { PushPin } from '@mui/icons-material';
 
 interface MyListProps {
     listId: string
@@ -156,9 +157,9 @@ export default function MyList(props: MyListProps) {
         <Box>
         {Array.from({ length: completedTasks.length }, (v, i) => i).map((index) =>
             <ListItem
-            key={index}
-            disablePadding
-            divider
+                key={index}
+                disablePadding
+                divider
             >
                 <ListItemButton onClick={handleCompletedInfo(index)}>
                     <ListItemText primary={completedTasks[index].task} sx={{textDecoration: 'line-through'}}/>
@@ -210,6 +211,11 @@ export default function MyList(props: MyListProps) {
                     disablePadding
                     divider
                 >
+                    {tasks[index].pinned &&
+                        <IconButton>
+                            <PushPin/>
+                        </IconButton>
+                    }
                     <ListItemButton onClick={handleInfo(index)}>
                         <ListItemText primary={tasks[index].task} />
                     </ListItemButton>
