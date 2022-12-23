@@ -1,13 +1,12 @@
 import * as React from 'react'
-import Task from "../../core/models/task.model"
-import { ListItem, ListItemText, ListItemButton, Checkbox, Box, IconButton, Button, Skeleton, Typography } from '@mui/material';
+import Task, { TaskType } from "../core/models/task.model"
+import { Box, Button, Skeleton, Typography } from '@mui/material';
 import axios from 'axios';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddTask from './AddTask';
-import UpdateTask from './UpdateTask';
+import AddTask from './components/AddTask';
+import UpdateTask from './components/UpdateTask';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
-import { PushPin } from '@mui/icons-material';
+import List from './components/List';
 
 interface MyListProps {
     listId: string
@@ -26,8 +25,10 @@ export default function MyList(props: MyListProps) {
     const [loaded, setLoaded] = React.useState(false);
 
     // Tasks
+    const [pinnedTasks, setPinnedTasks] = React.useState(new Array<Task>());
     const [tasks, setTasks] = React.useState(new Array<Task>());
     const [completedTasks, setCompletedTasks] = React.useState(new Array<Task>());
+    
     const [showCompleted, setShowCompleted] = React.useState(false);
     const [tasksChanged, setTasksChanged] = React.useState(false);
     const triggerTasksChanged = () => setTasksChanged(!tasksChanged)
@@ -56,50 +57,67 @@ export default function MyList(props: MyListProps) {
     //  Handlers
     // -----------------------------------------------------------------------
 
-    const handleTaskComplete = (index: number) => async () => {
-        const access_token = await getAccessToken();
-
-        axios.put(
-            '/v1/tasks',
-            {complete: true},
-            {params: {_id: tasks[index]._id}, headers: {Authorization: `Bearer ${access_token}`}}
-        )
-            .then(response => triggerTasksChanged());
-    }
-
-    const handleTaskUnComplete = (index: number) => async () => {
-        const access_token = await getAccessToken();
-
-        axios.put(
-            '/v1/tasks', 
-            {complete: false},
-            {params: {_id: completedTasks[index]._id}, headers: {Authorization: `Bearer ${access_token}`}},
-        )
-            .then(response => triggerTasksChanged());
-    }
-
-    const handleTaskDelete = (index: number, completed: boolean) => async () => {
-        const access_token = await getAccessToken();
-
-        let id;
-        if (completed) {
-            id = completedTasks[index]._id
+    const getIdFromList = (index: number, taskType: TaskType) => {
+        if (taskType === 'completed') {
+            return completedTasks[index]._id;
+        }
+        else if (taskType === 'normal') {
+            return tasks[index]._id;
         }
         else {
-            id = tasks[index]._id
+            return pinnedTasks[index]._id;
         }
-        axios.delete('/v1/tasks', {params: {_id: id}, headers: {Authorization: `Bearer ${access_token}`}})
-            .then(response => triggerTasksChanged());
     }
 
-    const handleInfo = (index: number) => () => {
-        setSelectedTask(tasks[index]);
+    const handleTaskComplete = (completed: boolean, taskType: TaskType) => (index: number) => async () => {
+        // Need to have an argument to decide what array to get the id from
+        const access_token = await getAccessToken();
+
+        await axios.put(
+            '/v1/tasks',
+            {complete: !completed},
+            {params: {_id: getIdFromList(index, taskType)}, headers: {Authorization: `Bearer ${access_token}`}}
+        )
+        triggerTasksChanged();
+    }
+
+    const handleTaskDelete = (index: number, taskType: TaskType) => async () => {
+        const access_token = await getAccessToken();
+
+        await axios.delete('/v1/tasks', {params: {_id: getIdFromList(index, taskType)}, headers: {Authorization: `Bearer ${access_token}`}})
+        triggerTasksChanged();
+    }
+
+    const handleInfo = (index: number, taskType: TaskType) => () => {
+        if (taskType === 'completed') {
+            setSelectedTask(completedTasks[index]);
+        }
+        else if (taskType === 'normal') {
+            setSelectedTask(tasks[index]);
+        }
+        else {
+            setSelectedTask(pinnedTasks[index])
+        }
         setUpdateDialogOpen(true);
     }
 
-    const handleCompletedInfo = (index: number) => () => {
-        setSelectedTask(completedTasks[index]);
-        setUpdateDialogOpen(true);
+    const handleTaskPin = (pinned: boolean) => (index: number) => async () => {
+        const access_token = await getAccessToken();
+        
+        let id;
+        if (pinned) {
+            id = pinnedTasks[index]._id;
+        }
+        else {
+            id = tasks[index]._id;
+        }
+
+        await axios.put(
+            '/v1/tasks',
+            {pinned: !pinned},
+            {params: {_id: id}, headers: {Authorization: `Bearer ${access_token}`}}
+        );
+        triggerTasksChanged();
     }
 
     // -----------------------------------------------------------------------
@@ -112,24 +130,28 @@ export default function MyList(props: MyListProps) {
         const getTask = async () => {
             const access_token = await getAccessToken();
 
-            // Get the uncompleted tasks
-            const uncPromise = axios.get(
+            // Get the uncompleted pinned tasks
+            const pinnedTaskReponse = await axios.get(
                 '/v1/tasks', 
-                {params: {list_id:props.listId, complete:false}, headers: {Authorization: `Bearer ${access_token}`}}
-            )
-                .then(response => response.data)
-                .then(data => setTasks(data))
+                {params: {list_id:props.listId, complete:false, pinned:true}, headers: {Authorization: `Bearer ${access_token}`}}
+            );
+            setPinnedTasks(pinnedTaskReponse.data);
+
+            // Get the uncompleted nonpinned tasks
+            const taskResponse = await axios.get(
+                '/v1/tasks', 
+                {params: {list_id:props.listId, complete:false, pinned:false}, headers: {Authorization: `Bearer ${access_token}`}}
+            );
+            setTasks(taskResponse.data);
 
             // Get the completed tasks
-            const cPromise = axios.get(
+            const completedTaskRespone = await axios.get(
                 '/v1/tasks',
                 {params: {list_id:props.listId, complete:true}, headers: {Authorization: `Bearer ${access_token}`}}
-            )
-                .then(response => response.data)
-                .then(data => setCompletedTasks(data))
+            );
+            setCompletedTasks(completedTaskRespone.data);
 
-            Promise.all([cPromise, uncPromise])
-                .then(() => setLoaded(true))
+            setLoaded(true);
         }
 
         getTask();
@@ -150,34 +172,16 @@ export default function MyList(props: MyListProps) {
         )
     }
 
+    // Completed tasks
     let completedSection;
     if (showCompleted && completedTasks.length > 0) {
-        // Completed tasks
-        completedSection = 
-        <Box>
-        {Array.from({ length: completedTasks.length }, (v, i) => i).map((index) =>
-            <ListItem
-                key={index}
-                disablePadding
-                divider
-            >
-                <ListItemButton onClick={handleCompletedInfo(index)}>
-                    <ListItemText primary={completedTasks[index].task} sx={{textDecoration: 'line-through'}}/>
-                </ListItemButton>
-                <Checkbox
-                    onChange={handleTaskUnComplete(index)}
-                    checked={true}
-                    sx={{p: 0.5}}
-                />
-                <IconButton 
-                    onClick={handleTaskDelete(index, true)}
-                    sx={{p: 0.5}}
-                >
-                    <DeleteIcon />
-                </IconButton>
-            </ListItem>
-        )}
-        </Box>
+        completedSection = <List
+            tasks={completedTasks}
+            taskType='completed'
+            handleCompletionChange={handleTaskComplete(true, 'completed')}
+            handleInfo={handleInfo}
+            handleDelete={handleTaskDelete}
+        />
     }
 
     // Show / hide button
@@ -205,33 +209,27 @@ export default function MyList(props: MyListProps) {
         {/* Tasks */}
 
         <Box sx={{maxHeight: 550, overflow: 'auto'}}>
-            {Array.from({ length: tasks.length }, (v, i) => i).map((index) =>
-                <ListItem
-                    key={index}
-                    disablePadding
-                    divider
-                >
-                    {tasks[index].pinned &&
-                        <IconButton>
-                            <PushPin/>
-                        </IconButton>
-                    }
-                    <ListItemButton onClick={handleInfo(index)}>
-                        <ListItemText primary={tasks[index].task} />
-                    </ListItemButton>
-                    <Checkbox
-                        onChange={handleTaskComplete(index)}
-                        checked={false}
-                        sx={{p: 0.5}}
-                    />
-                    <IconButton 
-                        onClick={handleTaskDelete(index, false)}
-                        sx={{p: 0.5}}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                </ListItem>
-            )}
+            {/* Pinned tasks */}
+            {pinnedTasks.length > 0 && 
+                <List
+                    tasks={pinnedTasks}
+                    taskType='pinned'
+                    handleCompletionChange={handleTaskComplete(false, 'pinned')}
+                    handleInfo={handleInfo}
+                    handleDelete={handleTaskDelete}
+                    handlePin={handleTaskPin(true)}
+                />
+            }
+            {/* Normal tasks */}
+            <List
+                tasks={tasks}
+                taskType='normal'
+                handleCompletionChange={handleTaskComplete(false, 'normal')}
+                handleInfo={handleInfo}
+                handleDelete={handleTaskDelete}
+                handlePin={handleTaskPin(false)}
+            />
+            {/* Completed tasks */}
             {completedSection}
         </Box>
 
