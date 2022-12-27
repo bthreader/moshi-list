@@ -4,7 +4,7 @@ import { Status } from "../core/models/status.model"
 import TaskList from "../core/models/list.model"
 import axios from 'axios'
 import { styled } from '@mui/material/styles';
-import MyList from './components/MyList'
+import MyList from './MyList'
 import { Container } from '@mui/system'
 import AddList from './components/AddList'
 import DeleteList from './components/DeleteList'
@@ -185,7 +185,7 @@ export default function MyLists() {
                 selectedListId={(selectedListId as string)}
             />
 
-            {/* Add list speed dial */}
+            {/* Add list floating action button */}
 
             <AddList triggerListsChanged={triggerListsChanged}/>
 

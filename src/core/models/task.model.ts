@@ -2,7 +2,10 @@ export default interface Task {
     _id: string
     username: string
     task: string
-    listId: string
+    listId: string 
     notes?: string
-    complete?: boolean
+    complete: boolean
+    pinned: boolean
 }
+
+export type TaskType = "pinned" | "normal" | "completed"
