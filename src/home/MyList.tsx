@@ -30,6 +30,8 @@ export default function MyList(props: MyListProps) {
     const [completedTasks, setCompletedTasks] = React.useState(new Array<Task>());
     
     const [showCompleted, setShowCompleted] = React.useState(false);
+
+    // Update trigger
     const [tasksChanged, setTasksChanged] = React.useState(false);
     const triggerTasksChanged = () => setTasksChanged(!tasksChanged)
 
@@ -70,7 +72,6 @@ export default function MyList(props: MyListProps) {
     }
 
     const handleTaskComplete = (completed: boolean, taskType: TaskType) => (index: number) => async () => {
-        // Need to have an argument to decide what array to get the id from
         const access_token = await getAccessToken();
 
         await axios.put(
