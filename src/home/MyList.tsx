@@ -28,7 +28,7 @@ export default function MyList(props: MyListProps) {
     const [pinnedTasks, setPinnedTasks] = React.useState(new Array<Task>());
     const [tasks, setTasks] = React.useState(new Array<Task>());
     const [completedTasks, setCompletedTasks] = React.useState(new Array<Task>());
-    
+
     const [showCompleted, setShowCompleted] = React.useState(false);
 
     // Update trigger
@@ -59,66 +59,132 @@ export default function MyList(props: MyListProps) {
     //  Handlers
     // -----------------------------------------------------------------------
 
-    const getIdFromList = (index: number, taskType: TaskType) => {
-        if (taskType === 'completed') {
-            return completedTasks[index]._id;
-        }
-        else if (taskType === 'normal') {
-            return tasks[index]._id;
-        }
-        else {
-            return pinnedTasks[index]._id;
+    const getTaskFromList = (index: number, taskType: TaskType): Task => {
+        switch (taskType) {
+            case 'completed':  return completedTasks[index];
+            case 'normal':  return tasks[index];
+            case 'pinned': return pinnedTasks[index];
         }
     }
 
+    const removeTaskFromList = (index: number, taskType: TaskType) => {
+        let newList;
+
+        switch (taskType) {
+            case 'completed': 
+                newList = [...completedTasks]
+                newList.splice(index, 1);
+                setCompletedTasks(newList); 
+                return;
+            case 'normal': 
+                newList = [...tasks]
+                newList.splice(index, 1);
+                setTasks(newList);
+                return;
+            case 'pinned': 
+                newList = [...pinnedTasks]
+                newList.splice(index, 1);
+                setPinnedTasks(newList); 
+                return;
+        }
+    }
+
+    const addTaskToList = (task: Task, destinationTaskType: TaskType) => {
+        let newList;
+        console.log(task);
+
+        switch (destinationTaskType) {
+            case 'completed': 
+                // Modify the task attributes to reflect where it's going
+                task.complete = true;
+                task.pinned = false;
+
+                // Push
+                newList = [...completedTasks]
+                newList.push(task);
+                setCompletedTasks(newList); 
+                return;
+            case 'normal':
+                // Modify the task attributes to reflect where it's going
+                task.complete = false;
+                task.pinned = false;
+
+                // Push
+                newList = [...tasks]
+                console.log(newList);
+                newList.push(task);
+                console.log(newList)
+                setTasks(newList);
+                return;
+            case 'pinned':
+                // Modify the task attributes to reflect where it's going
+                task.pinned = true;
+
+                // Push 
+                newList = [...pinnedTasks];
+                newList.push(task);
+                setPinnedTasks(newList); 
+                return;
+        }
+    }
+
+    // @param completed: before the event was the task completed?
     const handleTaskComplete = (completed: boolean, taskType: TaskType) => (index: number) => async () => {
         const access_token = await getAccessToken();
+
+        // Get a copy of the task
+        const taskCopy = getTaskFromList(index, taskType);
+
+        // Remove it from where it was
+        removeTaskFromList(index, taskType);
+
+        // Put it where it's going
+        if (completed) { addTaskToList(taskCopy, 'normal')
+        }
+        else { addTaskToList(taskCopy, 'completed')}
 
         await axios.put(
             '/v1/tasks',
             {complete: !completed},
-            {params: {_id: getIdFromList(index, taskType)}, headers: {Authorization: `Bearer ${access_token}`}}
-        )
-        triggerTasksChanged();
+            {params: {_id: taskCopy._id}, headers: {Authorization: `Bearer ${access_token}`}}
+        );
     }
 
     const handleTaskDelete = (index: number, taskType: TaskType) => async () => {
         const access_token = await getAccessToken();
-
-        await axios.delete('/v1/tasks', {params: {_id: getIdFromList(index, taskType)}, headers: {Authorization: `Bearer ${access_token}`}})
-        triggerTasksChanged();
+        removeTaskFromList(index, taskType);
+        await axios.delete('/v1/tasks', {params: {_id: getTaskFromList(index, taskType)._id}, headers: {Authorization: `Bearer ${access_token}`}})
     }
 
     const handleInfo = (index: number, taskType: TaskType) => () => {
-        if (taskType === 'completed') {
-            setSelectedTask(completedTasks[index]);
-        }
-        else if (taskType === 'normal') {
-            setSelectedTask(tasks[index]);
-        }
-        else {
-            setSelectedTask(pinnedTasks[index])
+        switch (taskType) {
+            case 'completed': setSelectedTask(completedTasks[index]); break;
+            case 'normal': setSelectedTask(tasks[index]); break;
+            case 'pinned': setSelectedTask(pinnedTasks[index]); break;
         }
         setUpdateDialogOpen(true);
     }
 
+    // @param pinned: before the event was the task pinned?
     const handleTaskPin = (pinned: boolean) => (index: number) => async () => {
         const access_token = await getAccessToken();
-        
-        let id;
-        if (pinned) {
-            id = pinnedTasks[index]._id;
-        }
-        else {
-            id = tasks[index]._id;
-        }
+
+        // Get a copy of the task
+        let from: TaskType;
+        let to: TaskType;
+        if (pinned) {from = 'pinned'; to = 'normal'}
+        else {from = 'normal'; to = 'pinned'}
+
+        const taskCopy = getTaskFromList(index, from);
+
+        removeTaskFromList(index, from);
+        addTaskToList(taskCopy, to);
 
         await axios.put(
             '/v1/tasks',
             {pinned: !pinned},
-            {params: {_id: id}, headers: {Authorization: `Bearer ${access_token}`}}
+            {params: {_id: taskCopy._id}, headers: {Authorization: `Bearer ${access_token}`}}
         );
-        triggerTasksChanged();
     }
 
     // -----------------------------------------------------------------------
