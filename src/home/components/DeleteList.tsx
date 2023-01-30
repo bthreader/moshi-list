@@ -6,7 +6,7 @@ import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
 interface DeleteListProps {
-    triggerListsChanged: () => void
+    deleteList: (id: string) => void
     selectedListId: string
 }
 
@@ -26,6 +26,8 @@ export default function DeleteList(props: DeleteListProps) {
     // -----------------------------------------------------------------------
 
     const handleDeleteList = async () => {
+        setWarningOpen(false)
+        props.deleteList(props.selectedListId)
         const accessTokenRequest = {account: accounts[0], scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]}
 
         try {
@@ -37,7 +39,6 @@ export default function DeleteList(props: DeleteListProps) {
                 '/v1/lists',
                 {params: {_id: props.selectedListId}, headers: {Authorization: `Bearer ${access_token}`}}
             )
-            props.triggerListsChanged();
         }
         catch (e) {
             switch(e) {

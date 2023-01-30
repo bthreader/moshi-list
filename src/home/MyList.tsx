@@ -91,7 +91,6 @@ export default function MyList(props: MyListProps) {
 
     const addTaskToList = (task: Task, destinationTaskType: TaskType) => {
         let newList;
-        console.log(task);
 
         switch (destinationTaskType) {
             case 'completed': 
@@ -111,9 +110,7 @@ export default function MyList(props: MyListProps) {
 
                 // Push
                 newList = [...tasks]
-                console.log(newList);
                 newList.push(task);
-                console.log(newList)
                 setTasks(newList);
                 return;
             case 'pinned':

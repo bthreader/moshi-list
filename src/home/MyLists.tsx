@@ -10,6 +10,7 @@ import AddList from './components/AddList'
 import DeleteList from './components/DeleteList'
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import { setMaxListeners } from 'events'
 
 interface StyledTabProps {
   label: string;
@@ -92,11 +93,23 @@ export default function MyLists() {
     //  Event handlers
     // -----------------------------------------------------------------------
 
-    // Tab change
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setSelectedTab(newValue);
         setSelectedListId((lists as TaskList[])[newValue]._id)
     };
+
+    const deleteList = (id: string) => {
+        var newList = [...(lists as TaskList[])]
+        newList = newList.filter(taskList => taskList._id !== id)
+        if (newList.length == 0) {
+            setLists(Status.DoKnowNull)
+            return
+        }
+        setSelectedListId(newList[0]._id)
+        setSelectedTab(0)
+        setLists(newList)
+        return
+    }
 
     // -----------------------------------------------------------------------
     //  Content + render
@@ -180,8 +193,8 @@ export default function MyLists() {
 
             {/* Delete list button */}
 
-            <DeleteList 
-                triggerListsChanged={triggerListsChanged} 
+            <DeleteList
+                deleteList = {deleteList}
                 selectedListId={(selectedListId as string)}
             />
 
