@@ -2,8 +2,8 @@ import * as React from 'react'
 import Task, { TaskType } from "../core/models/task.model"
 import { Box, Button, Skeleton, Typography } from '@mui/material';
 import axios from 'axios';
-import AddTask from './components/AddTask';
-import UpdateTask from './components/UpdateTask';
+import AddTaskButton from './components/AddTaskButton';
+import UpdateTaskDialog from './components/UpdateTaskDialog';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import List from './components/List';
@@ -28,7 +28,6 @@ export default function MyList(props: MyListProps) {
     const [pinnedTasks, setPinnedTasks] = React.useState(new Array<Task>());
     const [tasks, setTasks] = React.useState(new Array<Task>());
     const [completedTasks, setCompletedTasks] = React.useState(new Array<Task>());
-
     const [showCompleted, setShowCompleted] = React.useState(false);
 
     // Update trigger
@@ -297,17 +296,11 @@ export default function MyList(props: MyListProps) {
             {completedSection}
         </Box>
 
-        {/* Show / hide button */}
-
         {showHideButton}
 
-        {/* Add task section + dialog */}
+        <AddTaskButton triggerTasksChanged={triggerTasksChanged} listId={props.listId}/>
 
-        <AddTask triggerTasksChanged={triggerTasksChanged} listId={props.listId}/>
-
-        {/* Update task dialog */}
-
-        <UpdateTask
+        <UpdateTaskDialog
             task={(selectedTask as Task)}
             open={updateDialogOpen}
             close={closeUpdateDialog}

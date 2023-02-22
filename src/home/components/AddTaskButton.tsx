@@ -6,12 +6,12 @@ import TaskDialog from './TaskDialog';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
-interface AddTaskProps {
+interface AddTaskButtonProps {
     listId: string,
     triggerTasksChanged: () => void
 }
 
-export default function AddTask(props: AddTaskProps) {
+export default function AddTaskButton(props: AddTaskButtonProps) {
 
     // -----------------------------------------------------------------------
     //  State

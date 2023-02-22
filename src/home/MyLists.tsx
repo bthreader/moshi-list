@@ -6,11 +6,10 @@ import axios from 'axios'
 import { styled } from '@mui/material/styles';
 import MyList from './MyList'
 import { Container } from '@mui/system'
-import AddList from './components/AddList'
-import DeleteList from './components/DeleteList'
+import AddListButton from './components/AddListButton'
+import DeleteListButton from './components/DeleteListButton'
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
-import { setMaxListeners } from 'events'
 
 interface StyledTabProps {
   label: string;
@@ -61,13 +60,13 @@ export default function MyLists() {
         setLists(Status.DontKnow);
         const accessTokenRequest = {account: accounts[0], scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]}
 
-        const get_lists = async () => {
+        const getLists = async () => {
             try {
                 // Get access token
-                const access_token = (await instance.acquireTokenSilent(accessTokenRequest)).accessToken;
+                const accessToken = (await instance.acquireTokenSilent(accessTokenRequest)).accessToken;
 
                 // Make request to the API
-                const response = await axios.get('/v1/lists', {headers: {Authorization: `Bearer ${access_token}`}});
+                const response = await axios.get('/v1/lists', {headers: {Authorization: `Bearer ${accessToken}`}});
                 const response_data: TaskList[] = response.data
                 if (response_data.length ===  0) {
                     setLists(Status.DoKnowNull)
@@ -86,7 +85,7 @@ export default function MyLists() {
             }
         }
 
-        get_lists();
+        getLists();
     },[instance, accounts, listsChanged]);
 
     // -----------------------------------------------------------------------
@@ -167,7 +166,7 @@ export default function MyLists() {
                     </Typography>
                 </Stack>
                 {gif}
-                <AddList triggerListsChanged={triggerListsChanged}/>
+                <AddListButton triggerListsChanged={triggerListsChanged}/>
             </Box>
         )
     }
@@ -193,14 +192,14 @@ export default function MyLists() {
 
             {/* Delete list button */}
 
-            <DeleteList
+            <DeleteListButton
                 deleteList = {deleteList}
                 selectedListId={(selectedListId as string)}
             />
 
             {/* Add list floating action button */}
 
-            <AddList triggerListsChanged={triggerListsChanged}/>
+            <AddListButton triggerListsChanged={triggerListsChanged}/>
 
         </Box>
     )

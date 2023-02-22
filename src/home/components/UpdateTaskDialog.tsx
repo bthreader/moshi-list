@@ -6,14 +6,14 @@ import Task from '../../core/models/task.model';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
-interface UpdateTaskProps {
+interface UpdateTaskDialogProps {
     task?: Task,
     open: boolean,
     close: () => void,
     triggerTasksChanged: () => void
 }
 
-export default function UpdateTask(props: UpdateTaskProps) {
+export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
 
     // -----------------------------------------------------------------------
     //  State
