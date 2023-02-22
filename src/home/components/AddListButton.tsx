@@ -63,6 +63,7 @@ export default function AddListButton(props: AddListButtonProps) {
             color='primary'
             onClick={handleModalOpen}
             size='medium'
+            aria-label='Add List Button'
         >
             <SpeedDialIcon/>
         </Fab>
@@ -71,6 +72,7 @@ export default function AddListButton(props: AddListButtonProps) {
             onClose={handleModalClose}
             PaperProps={{sx: {borderRadius: '10px', p: 3}}}
             maxWidth="xs"
+            aria-label="Add List Dialog"
         >
             <Box 
                 sx={{

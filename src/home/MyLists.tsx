@@ -100,7 +100,7 @@ export default function MyLists() {
     const deleteList = (id: string) => {
         var newList = [...(lists as TaskList[])]
         newList = newList.filter(taskList => taskList._id !== id)
-        if (newList.length == 0) {
+        if (newList.length === 0) {
             setLists(Status.DoKnowNull)
             return
         }
