@@ -20,9 +20,7 @@ export default function NavBar() {
     // Handlers
     // -----------------------------------------------------------------------
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const handleClose = () => {setAnchorEl(null);};
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);

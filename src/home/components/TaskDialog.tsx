@@ -12,6 +12,7 @@ interface TaskDialogProps {
     buttonText: string,
 }
 
+/** Dialog for adding and updating tasks */
 export default function TaskDialog(props: TaskDialogProps) {
 
     return (

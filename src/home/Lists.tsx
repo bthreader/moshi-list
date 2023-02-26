@@ -4,7 +4,7 @@ import { Status } from "../core/models/status.model"
 import TaskList from "../core/models/list.model"
 import axios from 'axios'
 import { styled } from '@mui/material/styles';
-import MyList from './MyList'
+import FullList from './FullList'
 import { Container } from '@mui/system'
 import AddListButton from './components/AddListButton'
 import DeleteListButton from './components/DeleteListButton'
@@ -19,30 +19,23 @@ const StyledTab = styled(
     (props: StyledTabProps) => <Tab disableRipple {...props} />)
     ({
     textTransform: 'none',
-    // fontWeight: theme.typography.fontWeightRegular,
-    // fontSize: theme.typography.pxToRem(15),
-    // marginRight: theme.spacing(1),
     color: 'info',
     '&.Mui-selected': {
         color: 'primary',
     },
-    // '&.Mui-focusVisible': {
-    //     backgroundColor: 'rgba(100, 95, 228, 0.32)',
-    // },
 });
 
-export default function MyLists() {
+export default function Lists() {
 
     // -----------------------------------------------------------------------
     //  State
     // -----------------------------------------------------------------------
 
-    // MSAL
     const { instance, accounts } = useMsal();
 
     // Change trigger
     const [listsChanged, setListsChanged] = React.useState(false);
-    const triggerListsChanged = () => setListsChanged(!listsChanged);
+    const triggerListsChanged = React.useCallback(() => setListsChanged(listsChanged => !listsChanged), []);
 
     // Lists and tabs
     const [lists, setLists] = React.useState<Status | TaskList[]>(Status.DontKnow);
@@ -86,6 +79,7 @@ export default function MyLists() {
         }
 
         getLists();
+
     },[instance, accounts, listsChanged]);
 
     // -----------------------------------------------------------------------
@@ -184,7 +178,7 @@ export default function MyLists() {
             {/* My list */}
 
             <Container maxWidth='sm' sx={{mt:2}}>
-                <MyList listId={lists[selectedTab]._id}/>
+                <FullList listId={lists[selectedTab]._id}/>
             </Container>
 
             {/* Delete list button */}

@@ -19,7 +19,6 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
     //  State
     // -----------------------------------------------------------------------
 
-    // MSAL
     const { instance, accounts } = useMsal();
 
     // -----------------------------------------------------------------------
@@ -32,11 +31,10 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
         const accessTokenRequest = {account: accounts[0], scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]}
         const formData = new FormData(event.currentTarget);
 
-        // Don't bother with null -> null notes in the request
-        const n = formData.get('notes');
+        const notes = formData.get('notes');
         if (
-            (n === undefined) || 
-            (n === '') ||
+            (notes === undefined) || 
+            (notes === '') ||
             ((props.task as Task).notes === undefined)
         ) {
             formData.delete('notes');
@@ -67,7 +65,7 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
     // -----------------------------------------------------------------------
     //  Render
     // -----------------------------------------------------------------------
-    
+
     if (props.task === null) {
         return <Box/>
     }

@@ -17,7 +17,6 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
     //  State
     // -----------------------------------------------------------------------
 
-    // MSAL
     const { instance, accounts } = useMsal();
 
     const [modalOpen, setModalOpen] = React.useState(false);
@@ -26,10 +25,10 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
     //  Handlers
     // -----------------------------------------------------------------------
 
-    const handleModalOpen = () => setModalOpen(true);
-    const handleModalClose = () => setModalOpen(false);
+    const handleModalOpen = React.useCallback(() => setModalOpen(true), []);
+    const handleModalClose = React.useCallback(() => setModalOpen(false), []);
 
-    const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleAddTask = React.useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setModalOpen(false)
         const formData = new FormData(event.currentTarget);
@@ -55,7 +54,7 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
                 }
             }
         }
-    }
+    }, [accounts, instance, props])
 
     // -----------------------------------------------------------------------
     //  Render

@@ -26,7 +26,7 @@ export default function List(props: IListProps) {
                 </IconButton>
             )
         }
-        
+
         return (
             <IconButton onClick={props.handlePin?.(index)}>
                 <TurnedInNot/>

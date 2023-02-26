@@ -15,7 +15,6 @@ export default function AddListButton(props: AddListButtonProps) {
     // State
     // -----------------------------------------------------------------------
 
-    // MSAL
     const { instance, accounts } = useMsal();
 
     // Add List Modal
@@ -30,7 +29,10 @@ export default function AddListButton(props: AddListButtonProps) {
     const handleListAdd = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const accessTokenRequest = {account: accounts[0], scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]}
+        const accessTokenRequest = {
+            account: accounts[0], 
+            scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]
+        }
 
         try {
             // Get access token

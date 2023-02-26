@@ -8,20 +8,18 @@ import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import List from './components/List';
 
-interface MyListProps {
+interface FullListProps {
     listId: string
 }
 
-export default function MyList(props: MyListProps) {
+export default function FullList(props: FullListProps) {
 
     // -----------------------------------------------------------------------
     //  State
     // -----------------------------------------------------------------------
 
-    // MSAL
     const { instance, accounts } = useMsal();
 
-    // Loaded
     const [loaded, setLoaded] = React.useState(false);
 
     // Tasks
@@ -32,12 +30,12 @@ export default function MyList(props: MyListProps) {
 
     // Update trigger
     const [tasksChanged, setTasksChanged] = React.useState(false);
-    const triggerTasksChanged = () => setTasksChanged(!tasksChanged)
+    const triggerTasksChanged = React.useCallback(() => setTasksChanged(tasksChanged => !tasksChanged), [])
 
     // Update dialog
     const [selectedTask, setSelectedTask] = React.useState<Task | null>(null)
     const [updateDialogOpen, setUpdateDialogOpen] = React.useState(false);
-    const closeUpdateDialog = () => setUpdateDialogOpen(false);
+    const closeUpdateDialog = React.useCallback(() => setUpdateDialogOpen(false), []);
 
     // Get access token
     const getAccessToken = React.useCallback(async () => {
@@ -55,7 +53,7 @@ export default function MyList(props: MyListProps) {
     }, [instance, accounts]);
 
     // -----------------------------------------------------------------------
-    //  Handlers
+    //  State modifying functions
     // -----------------------------------------------------------------------
 
     const getTaskFromList = (index: number, taskType: TaskType): Task => {
@@ -124,8 +122,11 @@ export default function MyList(props: MyListProps) {
         }
     }
 
-    // @param completed: before the event was the task completed?
-    const handleTaskComplete = (completed: boolean, taskType: TaskType) => (index: number) => async () => {
+    // -----------------------------------------------------------------------
+    //  Handlers
+    // -----------------------------------------------------------------------
+
+    const handleToggleTaskComplete = (wasComplete: boolean, taskType: TaskType) => (index: number) => async () => {
         const access_token = await getAccessToken();
 
         // Get a copy of the task
@@ -135,13 +136,13 @@ export default function MyList(props: MyListProps) {
         removeTaskFromList(index, taskType);
 
         // Put it where it's going
-        if (completed) { addTaskToList(taskCopy, 'normal')
+        if (wasComplete) { addTaskToList(taskCopy, 'normal')
         }
         else { addTaskToList(taskCopy, 'completed')}
 
         await axios.put(
             '/v1/tasks',
-            {complete: !completed},
+            {complete: !wasComplete},
             {params: {_id: taskCopy._id}, headers: {Authorization: `Bearer ${access_token}`}}
         );
     }
@@ -149,26 +150,31 @@ export default function MyList(props: MyListProps) {
     const handleTaskDelete = (index: number, taskType: TaskType) => async () => {
         const access_token = await getAccessToken();
         removeTaskFromList(index, taskType);
-        await axios.delete('/v1/tasks', {params: {_id: getTaskFromList(index, taskType)._id}, headers: {Authorization: `Bearer ${access_token}`}})
+        await axios.delete(
+            '/v1/tasks',
+            {
+                params: {_id: getTaskFromList(index, taskType)._id}, 
+                headers: {Authorization: `Bearer ${access_token}`}
+            }
+        )
     }
 
-    const handleInfo = (index: number, taskType: TaskType) => () => {
+    const handleInfo = (taskIndex: number, taskType: TaskType) => () => {
         switch (taskType) {
-            case 'completed': setSelectedTask(completedTasks[index]); break;
-            case 'normal': setSelectedTask(tasks[index]); break;
-            case 'pinned': setSelectedTask(pinnedTasks[index]); break;
+            case 'completed': setSelectedTask(completedTasks[taskIndex]); break;
+            case 'normal': setSelectedTask(tasks[taskIndex]); break;
+            case 'pinned': setSelectedTask(pinnedTasks[taskIndex]); break;
         }
         setUpdateDialogOpen(true);
     }
 
-    // @param pinned: before the event was the task pinned?
-    const handleTaskPin = (pinned: boolean) => (index: number) => async () => {
+    const handleToggleTaskPin = (wasPinned: boolean) => (index: number) => async () => {
         const access_token = await getAccessToken();
 
         // Get a copy of the task
         let from: TaskType;
         let to: TaskType;
-        if (pinned) {from = 'pinned'; to = 'normal'}
+        if (wasPinned) {from = 'pinned'; to = 'normal'}
         else {from = 'normal'; to = 'pinned'}
 
         const taskCopy = getTaskFromList(index, from);
@@ -178,8 +184,11 @@ export default function MyList(props: MyListProps) {
 
         await axios.put(
             '/v1/tasks',
-            {pinned: !pinned},
-            {params: {_id: taskCopy._id}, headers: {Authorization: `Bearer ${access_token}`}}
+            {pinned: !wasPinned},
+            {
+                params: {_id: taskCopy._id}, 
+                headers: {Authorization: `Bearer ${access_token}`}
+            }
         );
     }
 
@@ -188,29 +197,39 @@ export default function MyList(props: MyListProps) {
     // -----------------------------------------------------------------------
 
     React.useEffect(() => {
+
         setLoaded(false);
 
         const getTask = async () => {
             const access_token = await getAccessToken();
 
-            // Get the uncompleted pinned tasks
+            // Pinned
             const pinnedTaskReponse = await axios.get(
                 '/v1/tasks', 
-                {params: {list_id:props.listId, complete:false, pinned:true}, headers: {Authorization: `Bearer ${access_token}`}}
+                {
+                    params: {list_id:props.listId, complete:false, pinned:true}, 
+                    headers: {Authorization: `Bearer ${access_token}`}
+                }
             );
             setPinnedTasks(pinnedTaskReponse.data);
 
-            // Get the uncompleted nonpinned tasks
+            // Outstanding but not pinned
             const taskResponse = await axios.get(
                 '/v1/tasks', 
-                {params: {list_id:props.listId, complete:false, pinned:false}, headers: {Authorization: `Bearer ${access_token}`}}
+                {
+                    params: {list_id:props.listId, complete:false, pinned:false}, 
+                    headers: {Authorization: `Bearer ${access_token}`}
+                }
             );
             setTasks(taskResponse.data);
 
-            // Get the completed tasks
+            // Completed
             const completedTaskRespone = await axios.get(
                 '/v1/tasks',
-                {params: {list_id:props.listId, complete:true}, headers: {Authorization: `Bearer ${access_token}`}}
+                {
+                    params: {list_id:props.listId, complete:true}, 
+                    headers: {Authorization: `Bearer ${access_token}`}
+                }
             );
             setCompletedTasks(completedTaskRespone.data);
 
@@ -218,7 +237,8 @@ export default function MyList(props: MyListProps) {
         }
 
         getTask();
-    },[props.listId, tasksChanged, getAccessToken])
+
+    }, [props.listId, tasksChanged, getAccessToken])
 
     // -----------------------------------------------------------------------
     //  Content
@@ -241,7 +261,7 @@ export default function MyList(props: MyListProps) {
         completedSection = <List
             tasks={completedTasks}
             taskType='completed'
-            handleCompletionChange={handleTaskComplete(true, 'completed')}
+            handleCompletionChange={handleToggleTaskComplete(true, 'completed')}
             handleInfo={handleInfo}
             handleDelete={handleTaskDelete}
         />
@@ -272,27 +292,27 @@ export default function MyList(props: MyListProps) {
         {/* Tasks */}
 
         <Box maxHeight={550} overflow='auto'>
-            {/* Pinned tasks */}
+            {/* Pinned */}
             {pinnedTasks.length > 0 && 
                 <List
                     tasks={pinnedTasks}
                     taskType='pinned'
-                    handleCompletionChange={handleTaskComplete(false, 'pinned')}
+                    handleCompletionChange={handleToggleTaskComplete(false, 'pinned')}
                     handleInfo={handleInfo}
                     handleDelete={handleTaskDelete}
-                    handlePin={handleTaskPin(true)}
+                    handlePin={handleToggleTaskPin(true)}
                 />
             }
-            {/* Normal tasks */}
+            {/* Outstanding not pinned */}
             <List
                 tasks={tasks}
                 taskType='normal'
-                handleCompletionChange={handleTaskComplete(false, 'normal')}
+                handleCompletionChange={handleToggleTaskComplete(false, 'normal')}
                 handleInfo={handleInfo}
                 handleDelete={handleTaskDelete}
-                handlePin={handleTaskPin(false)}
+                handlePin={handleToggleTaskPin(false)}
             />
-            {/* Completed tasks */}
+            {/* Completed */}
             {completedSection}
         </Box>
 

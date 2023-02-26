@@ -16,7 +16,6 @@ export default function DeleteListButton(props: DeleteListButtonProps) {
     //  State
     // -----------------------------------------------------------------------
 
-    // MSAL
     const { instance, accounts } = useMsal();
 
     const [warningOpen, setWarningOpen] = React.useState(false);
