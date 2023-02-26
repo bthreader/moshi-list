@@ -7,6 +7,7 @@ import UpdateTaskDialog from './components/UpdateTaskDialog';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import List from './components/List';
+import ShowHideButton from './components/ShowHideButton';
 
 interface FullListProps {
     listId: string
@@ -267,21 +268,6 @@ export default function FullList(props: FullListProps) {
         />
     }
 
-    // Show / hide button
-    let showHideButton;
-    if (completedTasks.length>0 && showCompleted === false) {
-        showHideButton = 
-        <Box display='flex' justifyContent='center' mt={1}>
-            <Button size='small' onClick={(e) => setShowCompleted(true)}>Show completed</Button>
-        </Box>
-    }
-    else if (completedTasks.length>0 && showCompleted) {
-        showHideButton = 
-        <Box display='flex' justifyContent='center' mt={1}>
-            <Button size='small' onClick={(e) => setShowCompleted(false)}>Hide completed</Button>
-        </Box>
-    }
-
     // -----------------------------------------------------------------------
     //  Render
     // -----------------------------------------------------------------------
@@ -316,7 +302,9 @@ export default function FullList(props: FullListProps) {
             {completedSection}
         </Box>
 
-        {showHideButton}
+        {completedTasks.length > 0 &&
+            <ShowHideButton showCompleted={showCompleted} setShowCompleted={setShowCompleted}/>
+        }
 
         <AddTaskButton triggerTasksChanged={triggerTasksChanged} listId={props.listId}/>
 

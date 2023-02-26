@@ -1,17 +1,48 @@
-import React from 'react';
-import {render, screen} from '@testing-library/react'
-import userEvent from '@testing-library/user-event';
-import AddListButton from "./AddListButton";
-import MockMsalContext from '../../core/testing/MockMsalContext';
+import { Box, Button, Grid, IconButton } from "@mui/material"
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 
-jest.mock('@azure/msal-react', () => ({
-    useMsal: () => MockMsalContext,
-}));
+interface ShowHideButtonProps {
+    showCompleted: boolean
+    setShowCompleted: (newValue: boolean) => void
+}
 
-jest.mock('axios');
-
-describe('ShowHideButton', () => {
-
-    it('loads and displays speed dial icon but not dialog', () => {
-    })
-})
+export default function ShowHideButton(props: ShowHideButtonProps) {
+    if (props.showCompleted) {
+        return (
+            <Grid container direction='column' height='100%' alignItems='center'>
+                <Grid item>
+                    <Box display='flex' justifyContent='center' mt={1}>
+                        <Button 
+                            size='small' 
+                            onClick={(e) => props.setShowCompleted(false)}
+                            aria-label="Hide completed tasks button"
+                        >
+                            Hide completed
+                        </Button>
+                    </Box>
+                </Grid>
+                <Grid item>
+                    <Button 
+                        variant="text" 
+                        size='small' 
+                        color='inherit' 
+                        aria-label="Delete all completed tasks button"
+                    >
+                        Delete Completed
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    }
+    return (
+        <Box display='flex' justifyContent='center' mt={1}>
+            <Button 
+                size='small' 
+                onClick={(e) => props.setShowCompleted(true)} 
+                aria-label="Show completed tasks button"
+            >
+                Show completed
+            </Button>
+        </Box>
+    )
+}
