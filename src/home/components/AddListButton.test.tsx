@@ -2,23 +2,45 @@ import React from 'react';
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import AddListButton from "./AddListButton";
+import MockMsalContext from '../../core/MockMsalContext';
 
-// Before each to define a local variable??
+jest.mock('@azure/msal-react', () => ({
+    useMsal: () => MockMsalContext,
+}));
 
-test('loads and displays speed dial icon', async () => {
-    const mockOnChange = jest.fn(); 
+jest.mock('axios');
 
-    render(<AddListButton triggerListsChanged={mockOnChange}/>);
+describe('AddListButton', () => {
 
-    expect(screen.getByLabelText('Add List Button')).toBeVisible();
-})
+    it('loads and displays speed dial icon', async () => {
+        const mockOnSubmit = jest.fn(); 
 
-test('clicking speed dial opens task dialog', async () => {
-    const user = userEvent.setup()
-    const mockOnChange = jest.fn(); 
+        render(<AddListButton triggerListsChanged={mockOnSubmit}/>);
 
-    render(<AddListButton triggerListsChanged={mockOnChange}/>);
+        expect(screen.getByLabelText('Add list button')).toBeVisible();
+    })
 
-    await user.click(screen.getByLabelText('Add List Button'));
-    expect(screen.getByLabelText('Add List Dialog')).toBeVisible();
+    it('opens task dialog when button is clicked', async () => {
+        const user = userEvent.setup()
+        const mockOnSubmit = jest.fn(); 
+
+        render(<AddListButton triggerListsChanged={mockOnSubmit}/>);
+
+        await user.click(screen.getByLabelText('Add list button'));
+        expect(screen.getByLabelText('Add list dialog')).toBeVisible();
+    })
+
+    it('calls the on submit function when add button is clicked on dialog',
+        async () => {
+            const user = userEvent.setup()
+            const mockOnSubmit = jest.fn(); 
+
+            render(<AddListButton triggerListsChanged={mockOnSubmit}/>);
+
+            await user.click(screen.getByLabelText('Add list button'));
+            await user.type(screen.getByLabelText('List name'), 'My List');
+            await user.click(screen.getByLabelText('Submit add list'));
+            expect(mockOnSubmit).toBeCalled();
+        }
+    )
 })
