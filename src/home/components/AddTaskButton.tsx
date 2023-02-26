@@ -63,7 +63,7 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
 
     return (
         <Box>
-            <Box sx={{display: 'flex', justifyContent: 'center'}}>
+            <Box display='flex' justifyContent='center'>
                 <IconButton color='primary' onClick={handleModalOpen}>
                     <AddIcon/>
                 </IconButton>

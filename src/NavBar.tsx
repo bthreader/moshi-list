@@ -41,13 +41,15 @@ export default function NavBar() {
 
     return (
         // <AppBar position="static">
-        <Grid container alignItems='center' sx={{mt: 3, textAlign: 'center'}}>
+        <Grid container alignItems='center' mt={3} textAlign='center'>
             <Grid item xs={2.5}/>
             <Grid item xs={7}>
-                <Typography variant="h4" color="primary" sx={{
-                    flexGrow: 1,
-                    cursor: 'default'
-                }}>
+                <Typography 
+                    variant="h4" 
+                    color="primary" 
+                    flexGrow={1}
+                    sx={{cursor: 'default'}}
+                >
                     Moshi List
                 </Typography>
             </Grid>

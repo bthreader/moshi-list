@@ -117,11 +117,7 @@ export default function MyLists() {
     // Loading
     if (lists === Status.DontKnow) {
         return (
-            <Box sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }} >
+            <Box display='flex' justifyContent='center'>
                 <CircularProgress color="primary"/>
             </Box>
         )
@@ -134,13 +130,13 @@ export default function MyLists() {
         if (showGif) {
             gif = 
         <Box
+            position='absolute'
+            top='33%'
+            left='50%'
+            display='flex'
+            justifyContent='center'
             sx={{
-                position: 'absolute' as 'absolute',
-                top: '33%',
-                left: '50%',
                 transform: 'translate(-50%, -33%) rotate(0.01turn)',
-                display: 'flex',
-                justifyContent: 'center'
             }}
         >
             <img
@@ -153,14 +149,15 @@ export default function MyLists() {
         // Add list hint
         return (
             <Box>
-                <Stack sx={{mt:2, textAlign: 'center', alignItems: 'center'}}>
+                <Stack mt={2} textAlign='center' alignItems='center'>
                     <Typography variant='h5'>Add a list to start!</Typography>
                     <Typography
                         onMouseEnter={() => setShowGif(true)}
                         onMouseLeave={() => setShowGif(false)}
                         variant='h4' 
                         color='primary'
-                        sx={{width: 'max-content', cursor: 'default'}}
+                        width='max-content'
+                        sx={{cursor: 'default'}}
                     >
                         😊
                     </Typography>

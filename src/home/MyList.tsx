@@ -251,13 +251,13 @@ export default function MyList(props: MyListProps) {
     let showHideButton;
     if (completedTasks.length>0 && showCompleted === false) {
         showHideButton = 
-        <Box sx={{display: 'flex', justifyContent: 'center', mt: 1}}>
+        <Box display='flex' justifyContent='center' mt={1}>
             <Button size='small' onClick={(e) => setShowCompleted(true)}>Show completed</Button>
         </Box>
     }
     else if (completedTasks.length>0 && showCompleted) {
         showHideButton = 
-        <Box sx={{display: 'flex', justifyContent: 'center', mt: 1}}>
+        <Box display='flex' justifyContent='center' mt={1}>
             <Button size='small' onClick={(e) => setShowCompleted(false)}>Hide completed</Button>
         </Box>
     }
@@ -271,7 +271,7 @@ export default function MyList(props: MyListProps) {
 
         {/* Tasks */}
 
-        <Box sx={{maxHeight: 550, overflow: 'auto'}}>
+        <Box maxHeight={550} overflow='auto'>
             {/* Pinned tasks */}
             {pinnedTasks.length > 0 && 
                 <List

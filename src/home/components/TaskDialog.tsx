@@ -45,7 +45,7 @@ export default function TaskDialog(props: TaskDialogProps) {
                     defaultValue={props.notesDefault}
                     variant="outlined"
                 />
-                <Box sx={{justifyContent: 'center', textAlign: 'center'}}>
+                <Box justifyContent='center' textAlign='center'>
                     <Button type="submit">{props.buttonText}</Button>
                 </Box>
             </Stack>

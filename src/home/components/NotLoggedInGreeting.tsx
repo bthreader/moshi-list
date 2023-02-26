@@ -8,7 +8,7 @@ const greetingStyle = {
 
 export default function NotLoggedInGreeting() {
     return (
-        <Container sx={{maxWidth: 'sm'}}>
+        <Container maxWidth='sm'>
             <Typography 
                 variant='h5' 
                 color='primary' 
