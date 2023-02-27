@@ -36,7 +36,7 @@ describe('PinnedSection', () => {
         expect(screen.queryByLabelText('Unpin task button')).toBeNull();
     })
 
-    it('calls the pinning handler when either turned in icon is clicked', async () => {
+    it('calls the pinning handler with correct args when either turned in icon is clicked', async () => {
         const mockHandlePin = jest.fn()
         const user = userEvent.setup()
 
@@ -49,15 +49,17 @@ describe('PinnedSection', () => {
 
         await user.click(screen.getByLabelText('Pin task button'));
         expect(mockHandlePin).toBeCalledTimes(1);
+        expect(mockHandlePin).toBeCalledWith(0);
 
         render(<PinnedSection
             pinned={true}
             complete={false}
-            taskIndex={0}
+            taskIndex={1}
             handlePin={mockHandlePin}
         />);
 
         await user.click(screen.getByLabelText('Unpin task button'));
         expect(mockHandlePin).toBeCalledTimes(2);
+        expect(mockHandlePin).toBeCalledWith(1);
     })
 })
