@@ -2,18 +2,18 @@ import * as React from 'react';
 import { Box } from "@mui/material"
 import axios from 'axios';
 import TaskDialog from './TaskDialog';
-import { TaskInDB } from '../../core/models/task.model';
+import { ITaskInDB } from '../../core/models/task.model';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
-interface UpdateTaskDialogProps {
-    task?: TaskInDB,
+interface IUpdateTaskDialogProps {
+    task?: ITaskInDB,
     open: boolean,
     close: () => void,
     triggerTasksChanged: () => void
 }
 
-export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
+export default function UpdateTaskDialog(props: IUpdateTaskDialogProps) {
 
     // -----------------------------------------------------------------------
     //  State
@@ -35,7 +35,7 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
         if (
             (notes === undefined) || 
             (notes === '') ||
-            ((props.task as TaskInDB).notes === undefined)
+            ((props.task as ITaskInDB).notes === undefined)
         ) {
             formData.delete('notes');
         }
@@ -47,7 +47,7 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
             axios.put(
                 '/v1/tasks',
                 Object.fromEntries(formData),
-                {params: {_id: (props.task as TaskInDB)._id}, headers: {Authorization: `Bearer ${access_token}`}}
+                {params: {_id: (props.task as ITaskInDB)._id}, headers: {Authorization: `Bearer ${access_token}`}}
             )
                 .then(response => {
                     props.triggerTasksChanged();
@@ -76,8 +76,8 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
             onClose={props.close}
             onSubmit={handleUpdateTask}
             buttonText="Update"
-            taskDefault={(props.task as TaskInDB).task}
-            notesDefault={(props.task as TaskInDB).notes}
+            taskDefault={(props.task as ITaskInDB).task}
+            notesDefault={(props.task as ITaskInDB).notes}
         />
     )
 }

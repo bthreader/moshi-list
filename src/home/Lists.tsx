@@ -11,12 +11,12 @@ import DeleteListButton from './components/DeleteListButton'
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
-interface StyledTabProps {
+interface IStyledTabProps {
   label: string;
 }
 
 const StyledTab = styled(
-    (props: StyledTabProps) => <Tab disableRipple {...props} />)
+    (props: IStyledTabProps) => <Tab disableRipple {...props} />)
     ({
     textTransform: 'none',
     color: 'info',

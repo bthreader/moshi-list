@@ -5,14 +5,14 @@ import axios from 'axios';
 import TaskDialog from './TaskDialog';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
-import { Task } from '../../core/models/task.model';
+import { ITask } from '../../core/models/task.model';
 
-interface AddTaskButtonProps {
+interface IAddTaskButtonProps {
     listId: string,
     triggerTasksChanged: () => void
 }
 
-export default function AddTaskButton(props: AddTaskButtonProps) {
+export default function AddTaskButton(props: IAddTaskButtonProps) {
 
     // -----------------------------------------------------------------------
     //  State
@@ -35,7 +35,7 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
 
         // Cast the form data to a Task object
         const formData = new FormData(event.currentTarget);
-        let newTask: Task = {
+        let newTask: ITask = {
             listId: props.listId,
             task: formData.get('task') as string,
         };

@@ -5,12 +5,12 @@ import axios from 'axios';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
-interface DeleteListButtonProps {
+interface IDeleteListButtonProps {
     deleteList: (id: string) => void
     selectedListId: string
 }
 
-export default function DeleteListButton(props: DeleteListButtonProps) {
+export default function DeleteListButton(props: IDeleteListButtonProps) {
 
     // -----------------------------------------------------------------------
     //  State

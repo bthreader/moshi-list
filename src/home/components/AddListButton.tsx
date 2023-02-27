@@ -5,11 +5,11 @@ import { Button, Dialog, Fab, SpeedDialIcon, TextField } from '@mui/material';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
-interface AddListButtonProps {
+interface IAddListButtonProps {
     triggerListsChanged: () => void
 }
 
-export default function AddListButton(props: AddListButtonProps) {
+export default function AddListButton(props: IAddListButtonProps) {
 
     // -----------------------------------------------------------------------
     // State

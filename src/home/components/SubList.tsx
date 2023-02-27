@@ -1,11 +1,11 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Checkbox, Grid, IconButton, ListItem, ListItemButton, ListItemText, SxProps } from "@mui/material";
-import { TaskType, TaskInDB } from "../../core/models/task.model"
+import { TaskType, ITaskInDB } from "../../core/models/task.model"
 import PinnedSection from './PinnedSection';
 
 
-interface IListProps {
-    tasks: TaskInDB[],
+interface ISubListProps {
+    tasks: ITaskInDB[],
     taskType: TaskType,
     handlePin?: (index: number) => () => Promise<void>,
     handleCompletionChange: (index: number) => () => Promise<void>,
@@ -13,7 +13,7 @@ interface IListProps {
     handleInfo: (index: number, taskType: TaskType) => () => void
 }
 
-export default function List(props: IListProps) {
+export default function SubList(props: ISubListProps) {
     // Line through completed tasks
     let listItemTextSx: SxProps;
     if (props.taskType === 'completed') {

@@ -2,14 +2,14 @@
 import { TurnedInNot, TurnedIn } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 
-interface PinnedSectionProps {
+interface IPinnedSectionProps {
     pinned: boolean,
     complete: boolean,
     handlePin?: (index: number) => () => Promise<void>,
     taskIndex: number,
 }
 
-export default function PinnedSection(props: PinnedSectionProps) {
+export default function PinnedSection(props: IPinnedSectionProps) {
     if (props.complete) {
         return <></>
     }

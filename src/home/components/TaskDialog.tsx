@@ -3,7 +3,7 @@ import { Box, Button, Dialog, TextField } from "@mui/material"
 import { Stack } from "@mui/system"
 import { formSubmitOnEnterKeyDown } from '../../core/utils';
 
-interface TaskDialogProps {
+interface ITaskDialogProps {
     open: boolean,
     onClose: () => void,
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
@@ -13,7 +13,7 @@ interface TaskDialogProps {
 }
 
 /** Dialog for adding and updating tasks */
-export default function TaskDialog(props: TaskDialogProps) {
+export default function TaskDialog(props: ITaskDialogProps) {
 
     return (
         <Dialog

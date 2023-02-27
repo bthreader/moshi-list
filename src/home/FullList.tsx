@@ -1,19 +1,19 @@
 import * as React from 'react'
-import { TaskInDB, TaskType } from "../core/models/task.model"
-import { Box, Button, Skeleton, Typography } from '@mui/material';
+import { ITaskInDB, TaskType } from "../core/models/task.model"
+import { Box, Skeleton, Typography } from '@mui/material';
 import axios from 'axios';
 import AddTaskButton from './components/AddTaskButton';
 import UpdateTaskDialog from './components/UpdateTaskDialog';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
-import List from './components/List';
+import SubList from './components/SubList';
 import ShowHideButton from './components/ShowHideButton';
 
-interface FullListProps {
+interface IFullListProps {
     listId: string
 }
 
-export default function FullList(props: FullListProps) {
+export default function FullList(props: IFullListProps) {
 
     // -----------------------------------------------------------------------
     //  State
@@ -24,9 +24,9 @@ export default function FullList(props: FullListProps) {
     const [loaded, setLoaded] = React.useState(false);
 
     // Tasks
-    const [pinnedTasks, setPinnedTasks] = React.useState(new Array<TaskInDB>());
-    const [tasks, setTasks] = React.useState(new Array<TaskInDB>());
-    const [completedTasks, setCompletedTasks] = React.useState(new Array<TaskInDB>());
+    const [pinnedTasks, setPinnedTasks] = React.useState(new Array<ITaskInDB>());
+    const [tasks, setTasks] = React.useState(new Array<ITaskInDB>());
+    const [completedTasks, setCompletedTasks] = React.useState(new Array<ITaskInDB>());
     const [showCompleted, setShowCompleted] = React.useState(false);
 
     // Update trigger
@@ -34,7 +34,7 @@ export default function FullList(props: FullListProps) {
     const triggerTasksChanged = React.useCallback(() => setTasksChanged(tasksChanged => !tasksChanged), [])
 
     // Update dialog
-    const [selectedTask, setSelectedTask] = React.useState<TaskInDB | null>(null)
+    const [selectedTask, setSelectedTask] = React.useState<ITaskInDB | null>(null)
     const [updateDialogOpen, setUpdateDialogOpen] = React.useState(false);
     const closeUpdateDialog = React.useCallback(() => setUpdateDialogOpen(false), []);
 
@@ -57,7 +57,7 @@ export default function FullList(props: FullListProps) {
     //  State modifying functions
     // -----------------------------------------------------------------------
 
-    const getTaskFromList = (index: number, taskType: TaskType): TaskInDB => {
+    const getTaskFromList = (index: number, taskType: TaskType): ITaskInDB => {
         switch (taskType) {
             case 'completed':  return completedTasks[index];
             case 'normal':  return tasks[index];
@@ -87,7 +87,7 @@ export default function FullList(props: FullListProps) {
         }
     }
 
-    const addTaskToList = (task: TaskInDB, destinationTaskType: TaskType) => {
+    const addTaskToList = (task: ITaskInDB, destinationTaskType: TaskType) => {
         let newList;
 
         switch (destinationTaskType) {
@@ -259,7 +259,7 @@ export default function FullList(props: FullListProps) {
     // Completed tasks
     let completedSection;
     if (showCompleted && completedTasks.length > 0) {
-        completedSection = <List
+        completedSection = <SubList
             tasks={completedTasks}
             taskType='completed'
             handleCompletionChange={handleToggleTaskComplete(true, 'completed')}
@@ -280,7 +280,7 @@ export default function FullList(props: FullListProps) {
         <Box maxHeight={550} overflow='auto'>
             {/* Pinned */}
             {pinnedTasks.length > 0 && 
-                <List
+                <SubList
                     tasks={pinnedTasks}
                     taskType='pinned'
                     handleCompletionChange={handleToggleTaskComplete(false, 'pinned')}
@@ -290,7 +290,7 @@ export default function FullList(props: FullListProps) {
                 />
             }
             {/* Outstanding not pinned */}
-            <List
+            <SubList
                 tasks={tasks}
                 taskType='normal'
                 handleCompletionChange={handleToggleTaskComplete(false, 'normal')}
@@ -309,7 +309,7 @@ export default function FullList(props: FullListProps) {
         <AddTaskButton triggerTasksChanged={triggerTasksChanged} listId={props.listId}/>
 
         <UpdateTaskDialog
-            task={(selectedTask as TaskInDB)}
+            task={(selectedTask as ITaskInDB)}
             open={updateDialogOpen}
             close={closeUpdateDialog}
             triggerTasksChanged={triggerTasksChanged}
