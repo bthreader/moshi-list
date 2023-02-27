@@ -1,6 +1,6 @@
 import { AuthenticationResult } from "@azure/msal-browser";
 
-const MockAuthenticationResult: AuthenticationResult = {
+const mockAuthenticationResult: AuthenticationResult = {
     accessToken: 'mockAccessToken',
     account: null,
     authority: 'mockAuthority',
@@ -15,4 +15,4 @@ const MockAuthenticationResult: AuthenticationResult = {
     uniqueId: 'mockUniqueId',
 };
 
-export default MockAuthenticationResult;
+export default mockAuthenticationResult;

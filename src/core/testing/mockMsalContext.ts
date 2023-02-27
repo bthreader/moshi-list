@@ -1,15 +1,15 @@
 import * as React from '@azure/msal-react'
 import { Logger, InteractionStatus } from "@azure/msal-browser";
-import MockAuthenticationResult from './MockAuthenticationResult'
+import mockAuthenticationResult from './mockAuthenticationResult'
 
-const MockMsalContext: React.IMsalContext = {
+const mockMsalContext: React.IMsalContext = {
     instance: {
         acquireTokenByCode: jest.fn(),
         addEventCallback: jest.fn(),
         acquireTokenPopup: jest.fn(),
         acquireTokenRedirect: jest.fn(),
         acquireTokenSilent: (silentRequest) => {
-            return Promise.resolve(MockAuthenticationResult);
+            return Promise.resolve(mockAuthenticationResult);
         },
         addPerformanceCallback: jest.fn(),
         disableAccountStorageEvents: jest.fn(),
@@ -48,4 +48,4 @@ const MockMsalContext: React.IMsalContext = {
     logger: new Logger({}),
 }
 
-export default MockMsalContext;
+export default mockMsalContext;
