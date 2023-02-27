@@ -90,7 +90,7 @@ export default function AddListButton(props: IAddListButtonProps) {
                     size='medium'
                     name='name'
                     label='List name'
-                    aria-label='List name'
+                    inputProps={{'aria-label': 'List name'}}
                     variant='outlined'
                 />
                 <Button aria-label="Submit add list" type="submit">Add</Button>
