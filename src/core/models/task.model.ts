@@ -1,10 +1,10 @@
-export interface Task {
+export interface ITask {
     task: string
     listId: string 
     notes?: string
 }
 
-export interface TaskInDB extends Task {
+export interface ITaskInDB extends ITask {
     _id: string
     username: string
     complete: boolean

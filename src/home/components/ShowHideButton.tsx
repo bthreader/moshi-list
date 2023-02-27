@@ -1,12 +1,11 @@
 import { Box, Button, Grid, IconButton } from "@mui/material"
-import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 
-interface ShowHideButtonProps {
+interface IShowHideButtonProps {
     showCompleted: boolean
     setShowCompleted: (newValue: boolean) => void
 }
 
-export default function ShowHideButton(props: ShowHideButtonProps) {
+export default function ShowHideButton(props: IShowHideButtonProps) {
     if (props.showCompleted) {
         return (
             <Grid container direction='column' height='100%' alignItems='center'>
