@@ -12,7 +12,7 @@ export default function ShowHideButton(props: ShowHideButtonProps) {
             <Grid container direction='column' height='100%' alignItems='center'>
                 <Grid item>
                     <Box display='flex' justifyContent='center' mt={1}>
-                        <Button 
+                        <Button
                             size='small' 
                             onClick={(e) => props.setShowCompleted(false)}
                             aria-label="Hide completed tasks button"
@@ -28,7 +28,7 @@ export default function ShowHideButton(props: ShowHideButtonProps) {
                         color='inherit' 
                         aria-label="Delete all completed tasks button"
                     >
-                        Delete Completed
+                        Delete all completed
                     </Button>
                 </Grid>
             </Grid>

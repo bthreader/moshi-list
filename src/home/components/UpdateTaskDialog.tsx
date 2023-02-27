@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Box } from "@mui/material"
 import axios from 'axios';
 import TaskDialog from './TaskDialog';
-import Task from '../../core/models/task.model';
+import { TaskInDB } from '../../core/models/task.model';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
 interface UpdateTaskDialogProps {
-    task?: Task,
+    task?: TaskInDB,
     open: boolean,
     close: () => void,
     triggerTasksChanged: () => void
@@ -35,7 +35,7 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
         if (
             (notes === undefined) || 
             (notes === '') ||
-            ((props.task as Task).notes === undefined)
+            ((props.task as TaskInDB).notes === undefined)
         ) {
             formData.delete('notes');
         }
@@ -47,7 +47,7 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
             axios.put(
                 '/v1/tasks',
                 Object.fromEntries(formData),
-                {params: {_id: (props.task as Task)._id}, headers: {Authorization: `Bearer ${access_token}`}}
+                {params: {_id: (props.task as TaskInDB)._id}, headers: {Authorization: `Bearer ${access_token}`}}
             )
                 .then(response => {
                     props.triggerTasksChanged();
@@ -76,8 +76,8 @@ export default function UpdateTaskDialog(props: UpdateTaskDialogProps) {
             onClose={props.close}
             onSubmit={handleUpdateTask}
             buttonText="Update"
-            taskDefault={(props.task as Task).task}
-            notesDefault={(props.task as Task).notes}
+            taskDefault={(props.task as TaskInDB).task}
+            notesDefault={(props.task as TaskInDB).notes}
         />
     )
 }

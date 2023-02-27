@@ -5,6 +5,7 @@ import axios from 'axios';
 import TaskDialog from './TaskDialog';
 import { useMsal } from '@azure/msal-react'
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import { Task } from '../../core/models/task.model';
 
 interface AddTaskButtonProps {
     listId: string,
@@ -31,8 +32,15 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
     const handleAddTask = React.useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setModalOpen(false)
+
+        // Cast the form data to a Task object
         const formData = new FormData(event.currentTarget);
-        formData.set('list_id', props.listId)
+        let newTask: Task = {
+            listId: props.listId,
+            task: formData.get('task') as string,
+        };
+        if (formData.get('notes') !== null) {newTask.notes = formData.get('notes') as string}
+
         const accessTokenRequest = {account: accounts[0], scopes: ["api://"+process.env.REACT_APP_CLIENT_ID+"/user"]}
 
         try {
@@ -41,7 +49,7 @@ export default function AddTaskButton(props: AddTaskButtonProps) {
 
             // Make request to the API
             await axios.post(
-                '/v1/tasks', Object.fromEntries(formData),
+                '/v1/tasks', newTask,
                 {headers: {Authorization: `Bearer ${access_token}`}}
             );
             setModalOpen(false);

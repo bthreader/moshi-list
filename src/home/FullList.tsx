@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Task, { TaskType } from "../core/models/task.model"
+import { TaskInDB, TaskType } from "../core/models/task.model"
 import { Box, Button, Skeleton, Typography } from '@mui/material';
 import axios from 'axios';
 import AddTaskButton from './components/AddTaskButton';
@@ -24,9 +24,9 @@ export default function FullList(props: FullListProps) {
     const [loaded, setLoaded] = React.useState(false);
 
     // Tasks
-    const [pinnedTasks, setPinnedTasks] = React.useState(new Array<Task>());
-    const [tasks, setTasks] = React.useState(new Array<Task>());
-    const [completedTasks, setCompletedTasks] = React.useState(new Array<Task>());
+    const [pinnedTasks, setPinnedTasks] = React.useState(new Array<TaskInDB>());
+    const [tasks, setTasks] = React.useState(new Array<TaskInDB>());
+    const [completedTasks, setCompletedTasks] = React.useState(new Array<TaskInDB>());
     const [showCompleted, setShowCompleted] = React.useState(false);
 
     // Update trigger
@@ -34,7 +34,7 @@ export default function FullList(props: FullListProps) {
     const triggerTasksChanged = React.useCallback(() => setTasksChanged(tasksChanged => !tasksChanged), [])
 
     // Update dialog
-    const [selectedTask, setSelectedTask] = React.useState<Task | null>(null)
+    const [selectedTask, setSelectedTask] = React.useState<TaskInDB | null>(null)
     const [updateDialogOpen, setUpdateDialogOpen] = React.useState(false);
     const closeUpdateDialog = React.useCallback(() => setUpdateDialogOpen(false), []);
 
@@ -57,7 +57,7 @@ export default function FullList(props: FullListProps) {
     //  State modifying functions
     // -----------------------------------------------------------------------
 
-    const getTaskFromList = (index: number, taskType: TaskType): Task => {
+    const getTaskFromList = (index: number, taskType: TaskType): TaskInDB => {
         switch (taskType) {
             case 'completed':  return completedTasks[index];
             case 'normal':  return tasks[index];
@@ -87,7 +87,7 @@ export default function FullList(props: FullListProps) {
         }
     }
 
-    const addTaskToList = (task: Task, destinationTaskType: TaskType) => {
+    const addTaskToList = (task: TaskInDB, destinationTaskType: TaskType) => {
         let newList;
 
         switch (destinationTaskType) {
@@ -309,7 +309,7 @@ export default function FullList(props: FullListProps) {
         <AddTaskButton triggerTasksChanged={triggerTasksChanged} listId={props.listId}/>
 
         <UpdateTaskDialog
-            task={(selectedTask as Task)}
+            task={(selectedTask as TaskInDB)}
             open={updateDialogOpen}
             close={closeUpdateDialog}
             triggerTasksChanged={triggerTasksChanged}

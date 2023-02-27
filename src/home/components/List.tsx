@@ -1,11 +1,11 @@
-import { TurnedInNot, TurnedIn } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Checkbox, Grid, IconButton, ListItem, ListItemButton, ListItemText, SxProps } from "@mui/material";
-import Task, { TaskType } from "../../core/models/task.model"
+import { TaskType, TaskInDB } from "../../core/models/task.model"
+import PinnedSection from './PinnedSection';
 
 
 interface IListProps {
-    tasks: Task[],
+    tasks: TaskInDB[],
     taskType: TaskType,
     handlePin?: (index: number) => () => Promise<void>,
     handleCompletionChange: (index: number) => () => Promise<void>,
@@ -14,26 +14,7 @@ interface IListProps {
 }
 
 export default function List(props: IListProps) {
-
-    const pinnedSectionRender = (complete: boolean, pinned: boolean, index: number) => {
-        if (complete) {
-            return
-        }
-        else if (pinned) {
-            return (
-                <IconButton onClick={props.handlePin?.(index)}>
-                    <TurnedIn color='primary'/>
-                </IconButton>
-            )
-        }
-
-        return (
-            <IconButton onClick={props.handlePin?.(index)}>
-                <TurnedInNot/>
-            </IconButton>
-        )
-    }
-
+    // Line through completed tasks
     let listItemTextSx: SxProps;
     if (props.taskType === 'completed') {
         listItemTextSx = {textDecoration: 'line-through'};
@@ -54,11 +35,11 @@ export default function List(props: IListProps) {
                 >
                     <Grid container direction={'row'} alignItems='center' textAlign='center'>
                         <Grid xs={1} item>
-                        {pinnedSectionRender(
-                            props.tasks[index].complete, 
-                            props.tasks[index].pinned,
-                            index
-                        )}
+                            <PinnedSection
+                                pinned={props.tasks[index].pinned}
+                                complete={props.tasks[index].complete}
+                                taskIndex={index}
+                            />
                         </Grid>
                         <Grid xs item>
                             <ListItemButton onClick={props.handleInfo(index, props.taskType)} sx={{paddingLeft: 1}}>
