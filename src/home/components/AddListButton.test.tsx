@@ -12,7 +12,7 @@ jest.mock('axios');
 
 describe('AddListButton', () => {
 
-    it('loads and displays speed dial icon but not dialog', () => {
+    it('loads and displays speed dial but not dialog', () => {
         const mockTriggerTasksChanged = jest.fn(); 
 
         render(<AddListButton triggerListsChanged={mockTriggerTasksChanged}/>);
@@ -21,7 +21,7 @@ describe('AddListButton', () => {
         expect(screen.queryByLabelText('Add list dialog')).toBeNull();
     })
 
-    it('opens task dialog when button is clicked', async () => {
+    it('opens dialog when button is clicked', async () => {
         const user = userEvent.setup()
         const mockTriggerTasksChanged = jest.fn(); 
 
@@ -32,7 +32,7 @@ describe('AddListButton', () => {
         expect(screen.getByLabelText('Add list dialog')).toBeVisible();
     })
 
-    it('calls the trigger tasks changed function when add button is clicked on dialog',
+    it('calls the trigger function when add button is clicked on dialog',
         async () => {
             const user = userEvent.setup()
             const mockTriggerTasksChanged = jest.fn(); 
