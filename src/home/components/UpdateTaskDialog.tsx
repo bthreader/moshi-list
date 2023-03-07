@@ -14,15 +14,7 @@ interface IUpdateTaskDialogProps {
 }
 
 export default function UpdateTaskDialog(props: IUpdateTaskDialogProps) {
-  // -----------------------------------------------------------------------
-  //  State
-  // -----------------------------------------------------------------------
-
   const { instance, accounts } = useMsal();
-
-  // -----------------------------------------------------------------------
-  //  Handlers
-  // -----------------------------------------------------------------------
 
   const handleUpdateTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

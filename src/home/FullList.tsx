@@ -14,7 +14,7 @@ interface IFullListProps {
   listId: string;
 }
 
-export default function FullList(props: IFullListProps) {
+export default function FullList({ listId }: IFullListProps) {
   // -----------------------------------------------------------------------
   //  State
   // -----------------------------------------------------------------------
@@ -225,6 +225,7 @@ export default function FullList(props: IFullListProps) {
   const handleDeleteAllCompleted = async () => {
     const completedTasksCopy = [...completedTasks];
     setCompletedTasks([]);
+
     const access_token = await getAccessToken();
 
     const promises = completedTasksCopy.map((task: ITaskInDB) => {
@@ -233,7 +234,6 @@ export default function FullList(props: IFullListProps) {
         headers: { Authorization: `Bearer ${access_token}` },
       });
     });
-
     await Promise.all(promises);
   };
 
@@ -249,21 +249,21 @@ export default function FullList(props: IFullListProps) {
 
       // Pinned
       const pinnedTaskReponse = await axios.get('/v1/tasks', {
-        params: { list_id: props.listId, complete: false, pinned: true },
+        params: { list_id: listId, complete: false, pinned: true },
         headers: { Authorization: `Bearer ${access_token}` },
       });
       setPinnedTasks(pinnedTaskReponse.data);
 
       // Outstanding but not pinned
       const taskResponse = await axios.get('/v1/tasks', {
-        params: { list_id: props.listId, complete: false, pinned: false },
+        params: { list_id: listId, complete: false, pinned: false },
         headers: { Authorization: `Bearer ${access_token}` },
       });
       setTasks(taskResponse.data);
 
       // Completed
       const completedTaskRespone = await axios.get('/v1/tasks', {
-        params: { list_id: props.listId, complete: true },
+        params: { list_id: listId, complete: true },
         headers: { Authorization: `Bearer ${access_token}` },
       });
       setCompletedTasks(completedTaskRespone.data);
@@ -272,7 +272,7 @@ export default function FullList(props: IFullListProps) {
     };
 
     getTask();
-  }, [props.listId, tasksChanged, getAccessToken]);
+  }, [listId, tasksChanged, getAccessToken]);
 
   // -----------------------------------------------------------------------
   //  Content
@@ -354,12 +354,12 @@ export default function FullList(props: IFullListProps) {
       >
         <AddTaskButton
           triggerTasksChanged={triggerTasksChanged}
-          listId={props.listId}
+          listId={listId}
           triggerLoading={() => setLoaded(false)}
         />
         <AddMultiTaskButton
           triggerTasksChanged={triggerTasksChanged}
-          listId={props.listId}
+          listId={listId}
           triggerLoading={() => setLoaded(false)}
         />
       </Box>

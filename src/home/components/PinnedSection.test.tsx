@@ -15,7 +15,7 @@ describe('PinnedSection', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('displays a unpin task button if the task is pinned', () => {
+  it('displays an unpin task button if the task is pinned', () => {
     render(
       <PinnedSection
         pinned={true}
@@ -28,7 +28,7 @@ describe('PinnedSection', () => {
     expect(screen.queryByLabelText('Pin task button')).toBeNull();
   });
 
-  it('displays a not turned in icon if the task is not pinned', () => {
+  it('displays a pin task button if the task is not pinned', () => {
     render(
       <PinnedSection
         pinned={false}
@@ -41,7 +41,7 @@ describe('PinnedSection', () => {
     expect(screen.queryByLabelText('Unpin task button')).toBeNull();
   });
 
-  it('calls the pinning handler with correct args when either turned in icon is clicked', async () => {
+  it('calls the pinning handler with correct args when either button is clicked', async () => {
     const mockHandlePin = jest.fn();
     const user = userEvent.setup();
 
@@ -55,6 +55,7 @@ describe('PinnedSection', () => {
     );
 
     await user.click(screen.getByLabelText('Pin task button'));
+
     expect(mockHandlePin).toBeCalledTimes(1);
     expect(mockHandlePin).toBeCalledWith(0);
 
@@ -68,6 +69,7 @@ describe('PinnedSection', () => {
     );
 
     await user.click(screen.getByLabelText('Unpin task button'));
+
     expect(mockHandlePin).toBeCalledTimes(2);
     expect(mockHandlePin).toBeCalledWith(1);
   });

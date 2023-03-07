@@ -1,13 +1,25 @@
-import Home from './home/Home';
 import NavBar from './NavBar';
 import './App.css';
 import { Box } from '@mui/material';
+import Lists from './home/Lists';
+import NotLoggedInGreeting from './NotLoggedInGreeting';
+import {
+  AuthenticatedTemplate,
+  UnauthenticatedTemplate,
+} from '@azure/msal-react';
 
 function App() {
   return (
     <Box>
       <NavBar />
-      <Home />
+      <Box>
+        <AuthenticatedTemplate>
+          <Lists />
+        </AuthenticatedTemplate>
+        <UnauthenticatedTemplate>
+          <NotLoggedInGreeting />
+        </UnauthenticatedTemplate>
+      </Box>
     </Box>
   );
 }

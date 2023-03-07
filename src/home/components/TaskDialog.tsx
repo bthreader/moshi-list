@@ -12,7 +12,7 @@ interface ITaskDialogProps {
   buttonText: string;
 }
 
-/** Dialog for adding and updating tasks */
+/** Generic dialog for adding and updating tasks */
 export default function TaskDialog(props: ITaskDialogProps) {
   return (
     <Dialog

@@ -22,7 +22,7 @@ interface ISubListProps {
 }
 
 export default function SubList(props: ISubListProps) {
-  // Line through completed tasks
+  // Line through for completed tasks
   let listItemTextSx: SxProps;
   if (props.taskType === 'completed') {
     listItemTextSx = { textDecoration: 'line-through' };

@@ -17,6 +17,7 @@ import AddListButton from './components/AddListButton';
 import DeleteListButton from './components/DeleteListButton';
 import { useMsal } from '@azure/msal-react';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
+import AddListHint from './components/AddListHint';
 
 interface IStyledTabProps {
   label: string;
@@ -57,9 +58,6 @@ export default function Lists() {
   const [selectedListId, setSelectedListId] = React.useState<null | string>(
     null
   );
-
-  // No lists gif
-  const [showGif, setShowGif] = React.useState(false);
 
   // -----------------------------------------------------------------------
   //  State update
@@ -143,49 +141,9 @@ export default function Lists() {
 
   // No tasks
   if (lists === Status.DoKnowNull) {
-    // Fun gif
-    let gif;
-    if (showGif) {
-      gif = (
-        <Box
-          position="absolute"
-          top="33%"
-          left="50%"
-          display="flex"
-          justifyContent="center"
-          sx={{
-            transform: 'translate(-50%, -33%) rotate(0.01turn)',
-          }}
-        >
-          <img
-            alt="Making notes"
-            src="https://media.tenor.com/iN6--FUiMnAAAAAC/noted-notes.gif"
-          />
-        </Box>
-      );
-    }
-
-    // Add list hint
     return (
       <Box>
-        <Stack
-          mt={2}
-          textAlign="center"
-          alignItems="center"
-        >
-          <Typography variant="h5">Add a list to start!</Typography>
-          <Typography
-            onMouseEnter={() => setShowGif(true)}
-            onMouseLeave={() => setShowGif(false)}
-            variant="h4"
-            color="primary"
-            width="max-content"
-            sx={{ cursor: 'default' }}
-          >
-            😊
-          </Typography>
-        </Stack>
-        {gif}
+        <AddListHint />
         <AddListButton triggerListsChanged={triggerListsChanged} />
       </Box>
     );
