@@ -44,24 +44,6 @@ export default function List({ listId }: IListProps) {
   );
   const [updateDialogOpen, setUpdateDialogOpen] = React.useState(false);
 
-  const getAccessToken = React.useCallback(async () => {
-    const accessTokenRequest = {
-      account: accounts[0],
-      scopes: ['api://' + process.env.REACT_APP_CLIENT_ID + '/user'],
-    };
-    try {
-      const access_token = (
-        await instance.acquireTokenSilent(accessTokenRequest)
-      ).accessToken;
-      return access_token;
-    } catch (e) {
-      switch (e) {
-        case InteractionRequiredAuthError:
-          instance.acquireTokenPopup(accessTokenRequest);
-      }
-    }
-  }, [instance, accounts]);
-
   // -----------------------------------------------------------------------
   //  State modifying functions
   // -----------------------------------------------------------------------
@@ -111,30 +93,21 @@ export default function List({ listId }: IListProps) {
 
       switch (destinationTaskType) {
         case 'completed':
-          // Modify the task attributes to reflect where it's going
           task.complete = true;
           task.pinned = false;
-
-          // Push
           newList = [...completedTasks];
           newList.push(task);
           setCompletedTasks(newList);
           return;
         case 'normal':
-          // Modify the task attributes to reflect where it's going
           task.complete = false;
           task.pinned = false;
-
-          // Push
           newList = [...tasks];
           newList.push(task);
           setTasks(newList);
           return;
         case 'pinned':
-          // Modify the task attributes to reflect where it's going
           task.pinned = true;
-
-          // Push
           newList = [...pinnedTasks];
           newList.push(task);
           setPinnedTasks(newList);
@@ -148,13 +121,29 @@ export default function List({ listId }: IListProps) {
   //  Handlers
   // -----------------------------------------------------------------------
 
+  const getAccessToken = React.useCallback(async () => {
+    const accessTokenRequest = {
+      account: accounts[0],
+      scopes: ['api://' + process.env.REACT_APP_CLIENT_ID + '/user'],
+    };
+    try {
+      const access_token = (
+        await instance.acquireTokenSilent(accessTokenRequest)
+      ).accessToken;
+      return access_token;
+    } catch (e) {
+      switch (e) {
+        case InteractionRequiredAuthError:
+          instance.acquireTokenPopup(accessTokenRequest);
+      }
+    }
+  }, [instance, accounts]);
+
   const handleToggleTaskComplete = React.useCallback(
     (wasComplete: boolean, taskType: TaskType) =>
       (index: number) =>
       async () => {
         const access_token = await getAccessToken();
-
-        // Get a copy of the task
         const taskCopy = getTaskFromList(index, taskType);
 
         // Remove it from where it was
@@ -213,7 +202,6 @@ export default function List({ listId }: IListProps) {
     (wasPinned: boolean) => (index: number) => async () => {
       const access_token = await getAccessToken();
 
-      // Get a copy of the task
       let from: TaskType;
       let to: TaskType;
       if (wasPinned) {
