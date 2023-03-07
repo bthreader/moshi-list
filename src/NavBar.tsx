@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -10,6 +9,7 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from '@azure/msal-react';
+import { useCallback, useState } from 'react';
 
 export default function NavBar() {
   // -----------------------------------------------------------------------
@@ -17,26 +17,26 @@ export default function NavBar() {
   // -----------------------------------------------------------------------
 
   const { instance } = useMsal();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   // -----------------------------------------------------------------------
   // Handlers
   // -----------------------------------------------------------------------
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  };
+  }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     handleClose();
     instance.logoutRedirect({
       postLogoutRedirectUri: '/',
     });
-  };
+  }, []);
 
   // -----------------------------------------------------------------------
   // Render

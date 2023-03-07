@@ -52,7 +52,7 @@ const config = {
 const publicClientApplication = new PublicClientApplication(config);
 
 // ---------------------------------------------------------------------------
-// Axios config
+// Render
 // ---------------------------------------------------------------------------
 
 const root = ReactDOM.createRoot(
