@@ -312,7 +312,7 @@ export default function FullList(props: IFullListProps) {
       {/* Tasks */}
 
       <Box
-        maxHeight={550}
+        maxHeight="30em"
         overflow="auto"
       >
         {/* Pinned */}
