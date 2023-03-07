@@ -36,7 +36,7 @@ export default function NavBar() {
     instance.logoutRedirect({
       postLogoutRedirectUri: '/',
     });
-  }, []);
+  }, [instance]);
 
   // -----------------------------------------------------------------------
   // Render
