@@ -72,7 +72,6 @@ export default function AddMultiTaskButton({
     }
   }, [
     inputtedTasks,
-    listId,
     triggerTasksChanged,
     handleClose,
     accounts,
