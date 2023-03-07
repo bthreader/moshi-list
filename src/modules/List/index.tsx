@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ITaskInDB, TaskType } from '../core/models/task.model';
+import { ITaskInDB, TaskType } from 'core/models/task.model';
 import { Box, Skeleton, Typography } from '@mui/material';
 import axios from 'axios';
 import AddTaskButton from './components/AddTaskButton';
@@ -10,11 +10,11 @@ import SubList from './components/SubList';
 import AddMultiTaskButton from './components/AddMultiTaskButton';
 import CompletedTasksButtonSet from './components/CompletedTasksButtonSet';
 
-interface IFullListProps {
+interface IListProps {
   listId: string;
 }
 
-export default function FullList({ listId }: IFullListProps) {
+export default function List({ listId }: IListProps) {
   // -----------------------------------------------------------------------
   //  State
   // -----------------------------------------------------------------------

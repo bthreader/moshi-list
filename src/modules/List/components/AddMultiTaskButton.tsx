@@ -6,7 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { ITask, castTaskToTaskForRequest } from '../../core/models/task.model';
+import { ITask, castTaskToTaskForRequest } from 'core/models/task.model';
 import axios from 'axios';
 import { useMsal } from '@azure/msal-react';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';

@@ -5,7 +5,7 @@ import axios from 'axios';
 import TaskDialog from './TaskDialog';
 import { useMsal } from '@azure/msal-react';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
-import { ITaskForRequest } from '../../core/models/task.model';
+import { ITaskForRequest } from 'core/models/task.model';
 
 interface IAddTaskButtonProps {
   listId: string;

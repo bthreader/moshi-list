@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Button, Dialog, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { formSubmitOnEnterKeyDown } from '../../core/utils';
+import { formSubmitOnEnterKeyDown } from 'core/utils';
 
 interface ITaskDialogProps {
   open: boolean;

@@ -9,7 +9,7 @@ import {
   ListItemText,
   SxProps,
 } from '@mui/material';
-import { TaskType, ITaskInDB } from '../../core/models/task.model';
+import { TaskType, ITaskInDB } from 'core/models/task.model';
 import PinnedSection from './PinnedSection';
 
 interface ISubListProps {

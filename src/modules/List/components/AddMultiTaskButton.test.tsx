@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddMultiTaskButton from './AddMultiTaskButton';
-import MockMsalContext from '../../core/testing/mockMsalContext';
+import MockMsalContext from 'core/testing/mockMsalContext';
 
 jest.mock('@azure/msal-react', () => ({
   useMsal: () => MockMsalContext,

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddListButton from './AddListButton';
-import mockMsalContext from '../../core/testing/mockMsalContext';
+import mockMsalContext from 'core/testing/mockMsalContext';
 
 jest.mock('@azure/msal-react', () => ({
   useMsal: () => mockMsalContext,

@@ -1,17 +1,10 @@
 import * as React from 'react';
-import {
-  Box,
-  CircularProgress,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from '@mui/material';
-import { Status } from '../core/models/status.model';
-import TaskList from '../core/models/list.model';
+import { Box, CircularProgress, Tab, Tabs } from '@mui/material';
+import { Status } from 'core/models/status.model';
+import TaskList from 'core/models/list.model';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
-import FullList from './FullList';
+import List from '../List';
 import { Container } from '@mui/system';
 import AddListButton from './components/AddListButton';
 import DeleteListButton from './components/DeleteListButton';
@@ -175,7 +168,7 @@ export default function Lists() {
         maxWidth="sm"
         sx={{ mt: 2 }}
       >
-        <FullList listId={lists[selectedTab]._id} />
+        <List listId={lists[selectedTab]._id} />
       </Container>
 
       {/* Delete list button */}

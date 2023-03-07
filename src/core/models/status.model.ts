@@ -1,4 +1,4 @@
 export enum Status {
-    DontKnow,
-    DoKnowNull
+  DontKnow,
+  DoKnowNull,
 }
