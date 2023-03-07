@@ -70,7 +70,15 @@ export default function AddMultiTaskButton({
         }
       }
     }
-  }, [inputtedTasks, listId, triggerTasksChanged, handleClose]);
+  }, [
+    inputtedTasks,
+    listId,
+    triggerTasksChanged,
+    handleClose,
+    accounts,
+    instance,
+    triggerLoading,
+  ]);
 
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
