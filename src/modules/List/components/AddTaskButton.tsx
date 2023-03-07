@@ -17,6 +17,9 @@ export default function AddTaskButton(props: IAddTaskButtonProps) {
   const { instance, accounts } = useMsal();
   const [modalOpen, setModalOpen] = React.useState(false);
 
+  const openModal = React.useCallback(() => setModalOpen(true), []);
+  const closeModal = React.useCallback(() => setModalOpen(false), []);
+
   const handleAddTask = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -68,14 +71,14 @@ export default function AddTaskButton(props: IAddTaskButtonProps) {
       >
         <IconButton
           color="primary"
-          onClick={() => setModalOpen(true)}
+          onClick={openModal}
         >
           <AddIcon />
         </IconButton>
       </Box>
       <TaskDialog
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleAddTask}
         buttonText="Add"
       />

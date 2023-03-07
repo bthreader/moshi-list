@@ -91,11 +91,15 @@ export default function AddMultiTaskButton({
     [listId]
   );
 
+  const openDialog = React.useCallback(() => {
+    setDialogOpen(true);
+  }, []);
+
   return (
     <Box>
       <IconButton
         aria-label="Add multiple tasks button"
-        onClick={() => setDialogOpen(true)}
+        onClick={openDialog}
       >
         <PlaylistAddIcon />
       </IconButton>

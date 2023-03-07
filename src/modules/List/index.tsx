@@ -66,133 +66,150 @@ export default function List({ listId }: IListProps) {
   //  State modifying functions
   // -----------------------------------------------------------------------
 
-  const getTaskFromList = (index: number, taskType: TaskType): ITaskInDB => {
-    switch (taskType) {
-      case 'completed':
-        return completedTasks[index];
-      case 'normal':
-        return tasks[index];
-      case 'pinned':
-        return pinnedTasks[index];
-    }
-  };
+  const getTaskFromList = React.useCallback(
+    (index: number, taskType: TaskType): ITaskInDB => {
+      switch (taskType) {
+        case 'completed':
+          return completedTasks[index];
+        case 'normal':
+          return tasks[index];
+        case 'pinned':
+          return pinnedTasks[index];
+      }
+    },
+    [completedTasks, pinnedTasks, tasks]
+  );
 
-  const removeTaskFromList = (index: number, taskType: TaskType) => {
-    let newList;
+  const removeTaskFromList = React.useCallback(
+    (index: number, taskType: TaskType) => {
+      let newList;
 
-    switch (taskType) {
-      case 'completed':
-        newList = [...completedTasks];
-        newList.splice(index, 1);
-        setCompletedTasks(newList);
-        return;
-      case 'normal':
-        newList = [...tasks];
-        newList.splice(index, 1);
-        setTasks(newList);
-        return;
-      case 'pinned':
-        newList = [...pinnedTasks];
-        newList.splice(index, 1);
-        setPinnedTasks(newList);
-        return;
-    }
-  };
+      switch (taskType) {
+        case 'completed':
+          newList = [...completedTasks];
+          newList.splice(index, 1);
+          setCompletedTasks(newList);
+          return;
+        case 'normal':
+          newList = [...tasks];
+          newList.splice(index, 1);
+          setTasks(newList);
+          return;
+        case 'pinned':
+          newList = [...pinnedTasks];
+          newList.splice(index, 1);
+          setPinnedTasks(newList);
+          return;
+      }
+    },
+    [completedTasks, tasks, pinnedTasks]
+  );
 
-  const addTaskToList = (task: ITaskInDB, destinationTaskType: TaskType) => {
-    let newList;
+  const addTaskToList = React.useCallback(
+    (task: ITaskInDB, destinationTaskType: TaskType) => {
+      let newList;
 
-    switch (destinationTaskType) {
-      case 'completed':
-        // Modify the task attributes to reflect where it's going
-        task.complete = true;
-        task.pinned = false;
+      switch (destinationTaskType) {
+        case 'completed':
+          // Modify the task attributes to reflect where it's going
+          task.complete = true;
+          task.pinned = false;
 
-        // Push
-        newList = [...completedTasks];
-        newList.push(task);
-        setCompletedTasks(newList);
-        return;
-      case 'normal':
-        // Modify the task attributes to reflect where it's going
-        task.complete = false;
-        task.pinned = false;
+          // Push
+          newList = [...completedTasks];
+          newList.push(task);
+          setCompletedTasks(newList);
+          return;
+        case 'normal':
+          // Modify the task attributes to reflect where it's going
+          task.complete = false;
+          task.pinned = false;
 
-        // Push
-        newList = [...tasks];
-        newList.push(task);
-        setTasks(newList);
-        return;
-      case 'pinned':
-        // Modify the task attributes to reflect where it's going
-        task.pinned = true;
+          // Push
+          newList = [...tasks];
+          newList.push(task);
+          setTasks(newList);
+          return;
+        case 'pinned':
+          // Modify the task attributes to reflect where it's going
+          task.pinned = true;
 
-        // Push
-        newList = [...pinnedTasks];
-        newList.push(task);
-        setPinnedTasks(newList);
-        return;
-    }
-  };
+          // Push
+          newList = [...pinnedTasks];
+          newList.push(task);
+          setPinnedTasks(newList);
+          return;
+      }
+    },
+    [completedTasks, tasks, pinnedTasks]
+  );
 
   // -----------------------------------------------------------------------
   //  Handlers
   // -----------------------------------------------------------------------
 
-  const handleToggleTaskComplete =
+  const handleToggleTaskComplete = React.useCallback(
     (wasComplete: boolean, taskType: TaskType) =>
-    (index: number) =>
-    async () => {
-      const access_token = await getAccessToken();
+      (index: number) =>
+      async () => {
+        const access_token = await getAccessToken();
 
-      // Get a copy of the task
-      const taskCopy = getTaskFromList(index, taskType);
+        // Get a copy of the task
+        const taskCopy = getTaskFromList(index, taskType);
 
-      // Remove it from where it was
-      removeTaskFromList(index, taskType);
+        // Remove it from where it was
+        removeTaskFromList(index, taskType);
 
-      // Put it where it's going
-      if (wasComplete) {
-        addTaskToList(taskCopy, 'normal');
-      } else {
-        addTaskToList(taskCopy, 'completed');
-      }
-
-      await axios.put(
-        '/v1/tasks',
-        { complete: !wasComplete },
-        {
-          params: { _id: taskCopy._id },
-          headers: { Authorization: `Bearer ${access_token}` },
+        // Put it where it's going
+        if (wasComplete) {
+          addTaskToList(taskCopy, 'normal');
+        } else {
+          addTaskToList(taskCopy, 'completed');
         }
-      );
-    };
 
-  const handleTaskDelete = (index: number, taskType: TaskType) => async () => {
-    const access_token = await getAccessToken();
-    removeTaskFromList(index, taskType);
-    await axios.delete('/v1/tasks', {
-      params: { _id: getTaskFromList(index, taskType)._id },
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
-  };
+        await axios.put(
+          '/v1/tasks',
+          { complete: !wasComplete },
+          {
+            params: { _id: taskCopy._id },
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+      },
+    [getAccessToken, addTaskToList, getTaskFromList, removeTaskFromList]
+  );
 
-  const handleInfo = (taskIndex: number, taskType: TaskType) => () => {
-    switch (taskType) {
-      case 'completed':
-        setSelectedTask(completedTasks[taskIndex]);
-        break;
-      case 'normal':
-        setSelectedTask(tasks[taskIndex]);
-        break;
-      case 'pinned':
-        setSelectedTask(pinnedTasks[taskIndex]);
-        break;
-    }
-    setUpdateDialogOpen(true);
-  };
+  const handleTaskDelete = React.useCallback(
+    (index: number, taskType: TaskType) => async () => {
+      const access_token = await getAccessToken();
+      removeTaskFromList(index, taskType);
+      await axios.delete('/v1/tasks', {
+        params: { _id: getTaskFromList(index, taskType)._id },
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+    },
+    [getAccessToken, getTaskFromList, removeTaskFromList]
+  );
 
-  const handleToggleTaskPin =
+  const handleInfo = React.useCallback(
+    (taskIndex: number, taskType: TaskType) => () => {
+      switch (taskType) {
+        case 'completed':
+          setSelectedTask(completedTasks[taskIndex]);
+          break;
+        case 'normal':
+          setSelectedTask(tasks[taskIndex]);
+          break;
+        case 'pinned':
+          setSelectedTask(pinnedTasks[taskIndex]);
+          break;
+      }
+      setUpdateDialogOpen(true);
+    },
+    [setSelectedTask, completedTasks, tasks, pinnedTasks]
+  );
+
+  const handleToggleTaskPin = React.useCallback(
     (wasPinned: boolean) => (index: number) => async () => {
       const access_token = await getAccessToken();
 
@@ -220,9 +237,11 @@ export default function List({ listId }: IListProps) {
           headers: { Authorization: `Bearer ${access_token}` },
         }
       );
-    };
+    },
+    [getAccessToken, addTaskToList, getTaskFromList, removeTaskFromList]
+  );
 
-  const handleDeleteAllCompleted = async () => {
+  const handleDeleteAllCompleted = React.useCallback(async () => {
     const completedTasksCopy = [...completedTasks];
     setCompletedTasks([]);
 
@@ -235,7 +254,7 @@ export default function List({ listId }: IListProps) {
       });
     });
     await Promise.all(promises);
-  };
+  }, [getAccessToken, completedTasks]);
 
   // -----------------------------------------------------------------------
   //  State update
@@ -244,7 +263,7 @@ export default function List({ listId }: IListProps) {
   React.useEffect(() => {
     setLoaded(false);
 
-    const getTask = async () => {
+    const getTasks = async () => {
       const access_token = await getAccessToken();
 
       // Pinned
@@ -271,11 +290,11 @@ export default function List({ listId }: IListProps) {
       setLoaded(true);
     };
 
-    getTask();
+    getTasks();
   }, [listId, tasksChanged, getAccessToken]);
 
   // -----------------------------------------------------------------------
-  //  Content
+  //  Render
   // -----------------------------------------------------------------------
 
   // Not loaded
@@ -289,28 +308,9 @@ export default function List({ listId }: IListProps) {
     );
   }
 
-  // Completed tasks
-  let completedSection;
-  if (showCompleted && completedTasks.length > 0) {
-    completedSection = (
-      <SubList
-        tasks={completedTasks}
-        taskType="completed"
-        handleCompletionChange={handleToggleTaskComplete(true, 'completed')}
-        handleInfo={handleInfo}
-        handleDelete={handleTaskDelete}
-      />
-    );
-  }
-
-  // -----------------------------------------------------------------------
-  //  Render
-  // -----------------------------------------------------------------------
-
   return (
     <Box>
       {/* Tasks */}
-
       <Box
         maxHeight="30em"
         overflow="auto"
@@ -336,7 +336,15 @@ export default function List({ listId }: IListProps) {
           handlePin={handleToggleTaskPin(false)}
         />
         {/* Completed */}
-        {completedSection}
+        {showCompleted && completedTasks.length > 0 && (
+          <SubList
+            tasks={completedTasks}
+            taskType="completed"
+            handleCompletionChange={handleToggleTaskComplete(true, 'completed')}
+            handleInfo={handleInfo}
+            handleDelete={handleTaskDelete}
+          />
+        )}
       </Box>
 
       {completedTasks.length > 0 && (
