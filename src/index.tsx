@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom/client'
+import * as ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from '@emotion/react';
@@ -15,21 +15,27 @@ import { PublicClientApplication } from '@azure/msal-browser';
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.withCredentials = true;
 
-axios.interceptors.request.use(request => {
+axios.interceptors.request.use(
+  (request) => {
     console.log(request);
     return request;
-}, error => {
+  },
+  (error) => {
     console.log(error);
     return Promise.reject(error);
-});
+  }
+);
 
-axios.interceptors.response.use(response => {
+axios.interceptors.response.use(
+  (response) => {
     console.log(response);
     return response;
-}, error => {
+  },
+  (error) => {
     console.log(error);
     return Promise.reject(error);
-});
+  }
+);
 
 // ---------------------------------------------------------------------------
 // MS auth config
@@ -37,9 +43,10 @@ axios.interceptors.response.use(response => {
 
 const config = {
   auth: {
-      clientId: (process.env.REACT_APP_CLIENT_ID as string),
-      authority: 'https://login.microsoftonline.com/'+process.env.REACT_APP_TENANT_ID,
-  }
+    clientId: process.env.REACT_APP_CLIENT_ID as string,
+    authority:
+      'https://login.microsoftonline.com/' + process.env.REACT_APP_TENANT_ID,
+  },
 };
 
 const publicClientApplication = new PublicClientApplication(config);
@@ -48,13 +55,15 @@ const publicClientApplication = new PublicClientApplication(config);
 // Axios config
 // ---------------------------------------------------------------------------
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 root.render(
   <React.StrictMode>
     <MsalProvider instance={publicClientApplication}>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
     </MsalProvider>
   </React.StrictMode>
 );
