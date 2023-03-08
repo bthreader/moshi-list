@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box } from '@mui/material';
 import axios from 'axios';
 import TaskDialog from './TaskDialog';
-import { ITaskInDB } from 'core/models/task.model';
+import { ITaskInDB, TaskType } from 'core/models/task.model';
 import { useMsal } from '@azure/msal-react';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
 

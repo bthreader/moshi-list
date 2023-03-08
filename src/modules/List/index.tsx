@@ -32,16 +32,18 @@ export default function List({ listId }: IListProps) {
   const [showCompleted, setShowCompleted] = React.useState(false);
 
   // Update tasks trigger
-  const [tasksChanged, setTasksChanged] = React.useState(false);
-  const triggerTasksChanged = React.useCallback(
-    () => setTasksChanged((tasksChanged) => !tasksChanged),
-    []
-  );
+  const [tasksChanged, setTasksChanged] = React.useState<Array<TaskType>>([
+    'completed',
+    'pinned',
+    'normal',
+  ]);
 
   // Update task dialog
   const [selectedTask, setSelectedTask] = React.useState<ITaskInDB | null>(
     null
   );
+  const [selectedTaskType, setSelectedTaskType] =
+    React.useState<TaskType | null>(null);
   const [updateDialogOpen, setUpdateDialogOpen] = React.useState(false);
 
   // -----------------------------------------------------------------------
@@ -117,8 +119,18 @@ export default function List({ listId }: IListProps) {
     [completedTasks, tasks, pinnedTasks]
   );
 
+  const triggerLoading = React.useCallback(() => setLoaded(false), [setLoaded]);
+  const closeUpdateDialog = React.useCallback(
+    () => setUpdateDialogOpen(false),
+    [setUpdateDialogOpen]
+  );
+  const triggerTasksTypeChanged = React.useCallback(
+    (t: TaskType) => () => setTasksChanged([t]),
+    [setTasksChanged]
+  );
+
   // -----------------------------------------------------------------------
-  //  Handlers
+  //  Outbound requests
   // -----------------------------------------------------------------------
 
   const getAccessToken = React.useCallback(async () => {
@@ -185,12 +197,15 @@ export default function List({ listId }: IListProps) {
       switch (taskType) {
         case 'completed':
           setSelectedTask(completedTasks[taskIndex]);
+          setSelectedTaskType('completed');
           break;
         case 'normal':
           setSelectedTask(tasks[taskIndex]);
+          setSelectedTaskType('normal');
           break;
         case 'pinned':
           setSelectedTask(pinnedTasks[taskIndex]);
+          setSelectedTaskType('pinned');
           break;
       }
       setUpdateDialogOpen(true);
@@ -245,7 +260,7 @@ export default function List({ listId }: IListProps) {
   }, [getAccessToken, completedTasks]);
 
   // -----------------------------------------------------------------------
-  //  State update
+  //  Sync
   // -----------------------------------------------------------------------
 
   React.useEffect(() => {
@@ -254,28 +269,32 @@ export default function List({ listId }: IListProps) {
     const getTasks = async () => {
       const access_token = await getAccessToken();
 
-      // Pinned
-      const pinnedTaskReponse = await axios.get('/v1/tasks', {
-        params: { list_id: listId, complete: false, pinned: true },
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-      setPinnedTasks(pinnedTaskReponse.data);
+      if (tasksChanged.includes('pinned')) {
+        const pinnedTaskReponse = await axios.get('/v1/tasks', {
+          params: { list_id: listId, complete: false, pinned: true },
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        setPinnedTasks(pinnedTaskReponse.data);
+      }
 
-      // Outstanding but not pinned
-      const taskResponse = await axios.get('/v1/tasks', {
-        params: { list_id: listId, complete: false, pinned: false },
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-      setTasks(taskResponse.data);
+      if (tasksChanged.includes('normal')) {
+        const taskResponse = await axios.get('/v1/tasks', {
+          params: { list_id: listId, complete: false, pinned: false },
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        setTasks(taskResponse.data);
+      }
 
-      // Completed
-      const completedTaskRespone = await axios.get('/v1/tasks', {
-        params: { list_id: listId, complete: true },
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-      setCompletedTasks(completedTaskRespone.data);
+      if (tasksChanged.includes('completed')) {
+        // Completed
+        const completedTaskRespone = await axios.get('/v1/tasks', {
+          params: { list_id: listId, complete: true },
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        setCompletedTasks(completedTaskRespone.data);
 
-      setLoaded(true);
+        setLoaded(true);
+      }
     };
 
     getTasks();
@@ -349,22 +368,24 @@ export default function List({ listId }: IListProps) {
         justifyContent="center"
       >
         <AddTaskButton
-          triggerTasksChanged={triggerTasksChanged}
+          triggerTasksChanged={triggerTasksTypeChanged('normal')}
           listId={listId}
-          triggerLoading={() => setLoaded(false)}
+          triggerLoading={triggerLoading}
         />
         <AddMultiTaskButton
-          triggerTasksChanged={triggerTasksChanged}
+          triggerTasksChanged={triggerTasksTypeChanged('normal')}
           listId={listId}
-          triggerLoading={() => setLoaded(false)}
+          triggerLoading={triggerLoading}
         />
       </Box>
 
       <UpdateTaskDialog
         task={selectedTask as ITaskInDB}
         open={updateDialogOpen}
-        close={() => setUpdateDialogOpen(false)}
-        triggerTasksChanged={triggerTasksChanged}
+        close={closeUpdateDialog}
+        triggerTasksChanged={triggerTasksTypeChanged(
+          selectedTaskType as TaskType
+        )}
       />
     </Box>
   );
