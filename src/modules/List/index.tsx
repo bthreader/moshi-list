@@ -292,9 +292,9 @@ export default function List({ listId }: IListProps) {
           headers: { Authorization: `Bearer ${access_token}` },
         });
         setCompletedTasks(completedTaskRespone.data);
-
-        setLoaded(true);
       }
+
+      setLoaded(true);
     };
 
     getTasks();
@@ -319,7 +319,7 @@ export default function List({ listId }: IListProps) {
     <Box>
       {/* Tasks */}
       <Box
-        maxHeight="30em"
+        maxHeight="55vh"
         overflow="auto"
       >
         {/* Pinned */}
