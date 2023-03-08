@@ -30,6 +30,16 @@ export default function CompletedTasksButtonSet({
     handleDeleteAllCompleted();
   }, [handleDeleteAllCompleted]);
 
+  const onClickToggleCompleted = useCallback(
+    (b: boolean) => () => setShowCompleted(b),
+    [setShowCompleted]
+  );
+
+  const onClickToggleWarning = useCallback(
+    (b: boolean) => () => setWarningOpen(b),
+    [setWarningOpen]
+  );
+
   if (showCompleted) {
     return (
       <Box>
@@ -54,7 +64,7 @@ export default function CompletedTasksButtonSet({
             >
               <Button
                 size="small"
-                onClick={() => setShowCompleted(false)}
+                onClick={onClickToggleCompleted(false)}
                 aria-label="Hide completed tasks button"
               >
                 Hide completed
@@ -72,7 +82,7 @@ export default function CompletedTasksButtonSet({
               >
                 <IconButton
                   size="small"
-                  onClick={() => setWarningOpen(true)}
+                  onClick={onClickToggleWarning(true)}
                   aria-label="Delete all completed tasks button"
                 >
                   <DeleteSweepIcon />
@@ -84,7 +94,7 @@ export default function CompletedTasksButtonSet({
         {numberCompleted > 1 && (
           <Dialog
             open={warningOpen}
-            onClose={() => setWarningOpen(false)}
+            onClose={onClickToggleWarning(false)}
             sx={{ textAlign: 'center' }}
             PaperProps={{ sx: { borderRadius: '10px' } }}
             aria-label="Delete all completed tasks warning"
@@ -100,7 +110,7 @@ export default function CompletedTasksButtonSet({
                 Yes
               </Button>
               <Button
-                onClick={() => setWarningOpen(false)}
+                onClick={onClickToggleWarning(false)}
                 aria-label="Cancel delete all completed tasks button"
               >
                 No
@@ -119,7 +129,7 @@ export default function CompletedTasksButtonSet({
     >
       <Button
         size="small"
-        onClick={() => setShowCompleted(true)}
+        onClick={onClickToggleCompleted(true)}
         aria-label="Show completed tasks button"
       >
         Show completed
